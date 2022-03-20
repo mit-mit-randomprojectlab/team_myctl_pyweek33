@@ -8,18 +8,23 @@ import os, sys
 import pygame
 from pygame.locals import *
 
-#
+from src.resource_manager import ResourceManager
+from src.models import Player
+
+
 def init(mainpath, window_size):
-    pass
-    
+
     # Load sprites
-    # TODO
-    
+    sprites = [
+        "absol.png",
+    ]
+    for sprite in sprites:
+        ResourceManager().get_image(sprite)
+
     # Load sound data
     # TODO
-    
+
     # Load music data
     # TODO
-    
-    # etc ....
 
+    # etc ....
