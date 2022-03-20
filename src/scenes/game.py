@@ -43,9 +43,7 @@ class MainGame(GameScene):
     def on_event(self, events):
         for event in events:
             if event.type == KEYDOWN and event.key == K_ESCAPE:
-                self.director.change_scene(
-                    None, []
-                )  # quit game for now, probably change later
+                self.director.change_scene("mainmenu", [])
                 # this is the basic way we might be able to switch from one scene to another:
                 # each scene has a reference to the director, and then when they are ready to
                 # transfer to the next scene, they just call director.change_scene() ...
