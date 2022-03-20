@@ -9,6 +9,8 @@ import pygame
 from pygame.locals import *
 from gamedirector import *
 from src.scenes import GameScene
+from src.utils import make_text
+import src.constants as constants
 
 import src.resources
 
@@ -56,6 +58,11 @@ class MainGame(GameScene):
         screen.fill((0, 0, 0))
 
         self.player.draw(screen, 100, 200)
+        text = make_text(
+            "Main Game Scene", constants.MENU_ITEM_FONT, (255, 255, 255), 50, 10
+        )
+
+        screen.blit(*text)
 
         # TODO: I recommend all objects that need to be drawn have their own draw() method
         # and these all get called here

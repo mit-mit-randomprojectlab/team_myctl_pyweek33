@@ -12,10 +12,7 @@ import os
 import pygame
 from pygame.locals import *
 from gamedirector import *
-import src.constants as constants
 
-import resources
-import scenes.game as game
 
 # Start
 def main(mainpath):
@@ -23,6 +20,11 @@ def main(mainpath):
     # Initialise pygame
     pygame.init()
     pygame.mixer.init()
+    import src.constants as constants
+    import resources
+    import scenes.game as game
+    import scenes.main_menu as menu
+
     # pygame.mouse.set_visible(False) # might turn off if want mouse gone
 
     # start up director
@@ -39,9 +41,11 @@ def main(mainpath):
 
     # Load game scenes
     # For now, I've got a very basic "MainGame"
+    mainmenu = menu.MainMenu(director, window_size)
+    director.addscene("mainmenu", mainmenu)
     maingame = game.MainGame(director, window_size)
     director.addscene("maingame", maingame)
 
     # start up director
-    director.change_scene("maingame", [])
+    director.change_scene("mainmenu", [])
     director.loop()
