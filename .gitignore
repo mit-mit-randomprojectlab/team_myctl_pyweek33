@@ -1,0 +1,8 @@
+# Environment folders
+.venv/
+venv/
+
+# Byte-Compiled dirs
+__pycache__/
+*.py[cod]
+*$py.class
