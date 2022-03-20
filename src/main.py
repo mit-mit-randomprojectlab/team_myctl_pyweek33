@@ -12,9 +12,10 @@ import os
 import pygame
 from pygame.locals import *
 from gamedirector import *
+import src.constants as constants
 
 import resources
-import game
+import scenes.game as game
 
 # Start
 def main(mainpath):
@@ -22,23 +23,25 @@ def main(mainpath):
     # Initialise pygame
     pygame.init()
     pygame.mixer.init()
-    #pygame.mouse.set_visible(False) # might turn off if want mouse gone
-    
+    # pygame.mouse.set_visible(False) # might turn off if want mouse gone
+
     # start up director
-    framerate = 30 # suggested 30fps, can modify if needed
-    window_size = (800,600) # arbitrarily set for now
-    window_title = "The Game"
-    dir = GameDirector(window_title, window_size, framerate)
-    
+    framerate = constants.FRAME_RATE  # suggested 30fps, can modify if needed
+    window_size = (
+        constants.WINDOW_SIZE_X,
+        constants.WINDOW_SIZE_Y,
+    )  # arbitrarily set for now
+    window_title = constants.WINDOW_TITLE
+    director = GameDirector(window_title, window_size, framerate)
+
     # Load all global resources (sprites, sounds, music etc.)
     resources.init(mainpath, window_size)
-    
+
     # Load game scenes
     # For now, I've got a very basic "MainGame"
-    maingame = game.MainGame(dir, window_size)
-    dir.addscene('maingame', maingame)
-    
+    maingame = game.MainGame(director, window_size)
+    director.addscene("maingame", maingame)
+
     # start up director
-    dir.change_scene('maingame', [])
-    dir.loop()
-    
+    director.change_scene("maingame", [])
+    director.loop()
