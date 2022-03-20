@@ -32,16 +32,16 @@ class MainMenu(GameScene):
     def draw_game(self, screen):
 
         # fill background (write over previously drawn data from past frames)
-        screen.fill((0, 0, 0))
+        screen.fill(constants.COLOR.BLACK.value)
 
         self.title = make_text(
-            "Game Title", constants.TITLE_FONT, (255, 255, 255), 150, 100
+            "Game Title", constants.TITLE_FONT, constants.COLOR.WHITE.value, 150, 100
         )
         screen.blit(*self.title)
         self.button1 = pygame.Rect(150, 200, 160, 50)
-        pygame.draw.rect(screen, (255, 0, 0), self.button1)
+        pygame.draw.rect(screen, constants.COLOR.GREEN.value, self.button1)
         self.button1_text = make_text(
-            "Main Game", constants.MENU_ITEM_FONT, (255, 255, 255), 170, 210
+            "Main Game", constants.MENU_ITEM_FONT, constants.COLOR.WHITE.value, 170, 210
         )
         screen.blit(*self.button1_text)
 

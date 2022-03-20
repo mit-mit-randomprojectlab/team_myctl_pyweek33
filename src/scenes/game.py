@@ -53,11 +53,15 @@ class MainGame(GameScene):
     def draw_game(self, screen):
 
         # fill background (write over previously drawn data from past frames)
-        screen.fill((0, 0, 0))
+        screen.fill(constants.COLOR.BLACK.value)
 
         self.player.draw(screen, 100, 200)
         text = make_text(
-            "Main Game Scene", constants.MENU_ITEM_FONT, (255, 255, 255), 50, 10
+            "Main Game Scene",
+            constants.MENU_ITEM_FONT,
+            constants.COLOR.WHITE.value,
+            50,
+            10,
         )
 
         screen.blit(*text)

@@ -45,9 +45,31 @@ class ResourceManager:
 
         return image
 
-    # TODO: handle sound caching
-    def get_sound(self, filename: str) -> pygame.mixer.Sound:
-        ...
+    def get_sound(self, filename: str, subtype: str = "sound") -> pygame.mixer.Sound:
+        """Get Sound
 
-    def get_music(self, filename: str) -> pygame.mixer.Sound:
-        ...
+        Args:
+            filename (str): name of sound file in path
+            subtype (str, optional): subtype of music. Defaults to "sound". Other option is "music"
+
+        """
+        # Check the path is defined
+        if not ResourceManager.__resources_path:
+            raise ValueError("Invalid resources path")
+
+        # If using cache, and it cache, return cached image
+        if filename in ResourceManager.__sounds:
+            return ResourceManager.__sounds[filename]
+
+        # Else, try to load the sound
+        try:
+            sound = pygame.mixer.music.load(
+                ResourceManager.__resources_path / subtype / filename
+            )
+
+        except pygame.error as e:
+            raise IOError("Couldn't load image: {e}".format(e=e))
+
+        ResourceManager.__sounds[filename] = sound
+
+        return sound
