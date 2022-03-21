@@ -1,12 +1,13 @@
 import pygame
-from sys import exit
+from src.resource_manager import ResourceManager
+
 
 class Wall(pygame.sprite.Sprite):
-    def __init__(self,x,y):
+    def __init__(self, x, y):
         super().__init__()
-        self.wall = pygame.image.load('assets/graphics/orange_rectangle.png').convert_alpha()
+        self.wall = ResourceManager().get_image("orange_rectangle.png")
         self.wall = pygame.transform.scale2x(self.wall)
         self.x = int(x)
         self.y = int(y)
         self.image = self.wall
-        self.rect = self.image.get_rect(midbottom = (x,y))
+        self.rect = self.image.get_rect(midbottom=(x, y))
