@@ -13,6 +13,7 @@ from src.utils import make_text
 import src.constants as constants
 
 import src.resources
+from src.models import Wall
 
 # TODO: put classes for in-game objects in other source files and import them
 from src.models import Player
@@ -23,6 +24,19 @@ class MainGame(GameScene):
         super(MainGame, self).__init__(director)
         self.window_size = window_size
 
+        # Background
+        self.good_surf = pygame.Surface((400, 600))
+        self.evil_surf = pygame.Surface((400, 600))
+
+        # Obstacles
+        self.obstacles = pygame.sprite.Group()
+        self.obstacles.add(Wall(600, 300))
+
+        # Player
+        self.good = pygame.sprite.GroupSingle()
+        self.good.add(Player("good", 200, 300, self.obstacles))
+        self.evil = pygame.sprite.GroupSingle()
+        self.evil.add(Player("evil", 600, 300, self.obstacles))
         # Use this space to initialise anything that only needs to be done when the game/app
         # first starts up and not again
 
@@ -32,7 +46,7 @@ class MainGame(GameScene):
         # back to this scene (i.e. could happen multiple time in a game).
         # I recommend re-instantiating in-game objects here (e.g. like the player, and put
         # the player starting data in it's __init__() method etc. ...
-        self.player = Player((100, 100))
+        pass
 
     def on_update(self):
         pass
@@ -54,23 +68,25 @@ class MainGame(GameScene):
 
         # fill background (write over previously drawn data from past frames)
         screen.fill(constants.COLOR.BLACK.value)
+        self.good_surf.fill((208, 247, 247))
+        self.evil_surf.fill((228, 184, 255))
 
-        self.player.draw(screen, 100, 200)
-        text = make_text(
-            "Main Game Scene",
-            constants.MENU_ITEM_FONT,
-            constants.COLOR.WHITE.value,
-            50,
-            10,
-        )
+        screen.blit(self.good_surf, (0, 0))
+        screen.blit(self.evil_surf, (400, 0))
 
-        screen.blit(*text)
+        self.good.draw(screen)
+        self.good.update()
+        self.evil.draw(screen)
+        self.evil.update()
+        self.obstacles.draw(screen)
+        self.obstacles.update()
 
         # TODO: I recommend all objects that need to be drawn have their own draw() method
         # and these all get called here
 
     def on_draw(self, screen):
         self.draw_game(screen)
+        pygame.display.update()
         # splitting out into two functions here (i.e. "on_draw" and "draw_game") makes it easier
         # in the future to do things like render fade in/outs, pause screens, other effects ect.
         # on top of the regular drawing of objects (specified in "draw_game")
