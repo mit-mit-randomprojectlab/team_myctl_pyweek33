@@ -5,8 +5,20 @@ from src.resource_manager import ResourceManager
 class Player(pygame.sprite.Sprite):
     def __init__(self, twin, x, y, obstacles):
         super().__init__()
+        
         # Load all animations of character
         self.twin = twin
+        self.img_idle = []
+        self.img_walk_up = []
+        self.img_walk_down = []
+        for i in range(3):
+            self.img_idle.append(ResourceManager().get_image("player"+self.twin+"_idle%d.png"%(i)))
+        self.img_idle.append(ResourceManager().get_image("playergood_idle0.png")) # quick safety measure :)
+        for i in range(4):
+            self.img_walk_up.append(ResourceManager().get_image("playergoodback_walk%d.png"%(i))) # good/evil twin look same from behind :)
+            self.img_walk_down.append(ResourceManager().get_image("player"+self.twin+"_walk%d.png"%(i)))
+        self.image = self.img_idle[0]
+        """
         self.walk_up = ResourceManager().get_image(f"{self.twin}_up.png")
         self.walk_up = pygame.transform.scale2x(self.walk_up)
         self.walk_down = ResourceManager().get_image(f"{self.twin}_down.png")
@@ -16,11 +28,14 @@ class Player(pygame.sprite.Sprite):
         self.walk_left = ResourceManager().get_image(f"{self.twin}_left.png")
         self.walk_left = pygame.transform.scale2x(self.walk_left)
         self.image = self.walk_up
+        """
 
         # Variables for smooth movement
         self.x = int(x)
         self.y = int(y)
-        self.rect = pygame.Rect(self.x, self.y, 16, 16)
+        #self.rect = pygame.Rect(self.x, self.y, 32, 32)
+        # Updated here to make (x,y) the center of the player's hit box
+        self.rect = pygame.Rect(int(self.x)-16, int(self.y)-16-22, 32, 32)
         self.vx = 0
         self.vy = 0
         self.left_pressed = False
@@ -28,6 +43,11 @@ class Player(pygame.sprite.Sprite):
         self.up_pressed = False
         self.down_pressed = False
         self.speed = 4
+        
+        # Variables to control animation
+        self.aniframe = 0
+        self.ani_to = 0
+        self.moving = False
 
         # Obstacles
         self.obstacles = obstacles
@@ -52,14 +72,39 @@ class Player(pygame.sprite.Sprite):
             self.down_pressed = False
 
     def animation_state(self):
+        self.ani_to += 1
+        if self.ani_to > 3:
+            self.ani_to = 0
+            self.aniframe += 1
+            if self.moving == True and self.aniframe > 3:
+                self.aniframe = 0
+            elif self.moving == False and self.aniframe > 2:
+                self.aniframe = 0
+                
         if self.left_pressed and not self.right_pressed:
-            self.image = self.walk_left
-        if self.right_pressed and not self.left_pressed:
-            self.image = self.walk_right
+            dx = -1 # expected change in x-direction
+        elif self.right_pressed and not self.left_pressed:
+            dx = 1 # expected change in x-direction
+        else:
+            dx = 0
         if self.up_pressed and not self.down_pressed:
-            self.image = self.walk_up
-        if self.down_pressed and not self.up_pressed:
-            self.image = self.walk_down
+            dy = -1 # expected change in y-direction
+        elif self.down_pressed and not self.up_pressed:
+            dy = 1 # expected change in y-direction
+        else:
+            dy = 0
+        
+        # set frames
+        if dx == 0 and dy == 0:
+            self.moving = False
+        else:
+            self.moving = True
+        if dy < 0:
+            self.image = self.img_walk_up[self.aniframe]
+        elif dy > 0 or dx > 0 or dx < 0:
+            self.image = self.img_walk_down[self.aniframe]
+        else:
+            self.image = self.img_idle[self.aniframe]
 
     def movement(self):
         self.vx = 0
@@ -78,22 +123,26 @@ class Player(pygame.sprite.Sprite):
         # Collision (incomplete)
 
         # Barrier (not a good implementation of barrier, not precise because has some approximation)
+        # mit-mit: updated here so (x,y) will now represent center of player hitbox, not the
+        # upper left corner of the graphic
         if self.twin == "good":
-            if self.x >= 400 - 32:
-                self.x = 400 - 32
-            if self.x <= 0:
-                self.x = 0
+            if self.x >= 400 - 16:
+                self.x = 400 - 16
+            if self.x <= 16:
+                self.x = 16
         if self.twin == "evil":
-            if self.x >= 800 - 32:
-                self.x = 800 - 32
-            if self.x <= 400:
-                self.x = 400
-        if self.y <= 0:
-            self.y = 0
-        if self.y >= 600 - 32:
-            self.y = 600 - 32
+            if self.x >= 800 - 16:
+                self.x = 800 - 16
+            if self.x <= 400 + 16:
+                self.x = 400 + 16
+        if self.y <= 16:
+            self.y = 16
+        if self.y >= 600 - 16:
+            self.y = 600 - 16
 
-        self.rect = pygame.Rect(int(self.x), int(self.y), 16, 16)
+        #self.rect = pygame.Rect(int(self.x), int(self.y), 32, 32)
+        # Updated here to make (x,y) the center of the player's hit box
+        self.rect = pygame.Rect(int(self.x)-16, int(self.y)-16-22, 32, 32)
 
     def update(self):
         self.player_input()
