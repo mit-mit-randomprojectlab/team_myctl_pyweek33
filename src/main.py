@@ -24,6 +24,7 @@ def main(mainpath):
     import resources
     import scenes.game as game
     import scenes.main_menu as menu
+    import scenes.introscene as intro
 
     # pygame.mouse.set_visible(False) # might turn off if want mouse gone
 
@@ -45,7 +46,10 @@ def main(mainpath):
     director.addscene("mainmenu", mainmenu)
     maingame = game.MainGame(director, window_size)
     director.addscene("maingame", maingame)
+    introscene = intro.IntroCutScene(director, window_size)
+    director.addscene("introscene", introscene)
 
     # start up director
     director.change_scene("mainmenu", [])
+    #director.change_scene("introscene", [])
     director.loop()
