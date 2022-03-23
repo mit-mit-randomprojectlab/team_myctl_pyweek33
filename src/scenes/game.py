@@ -17,6 +17,7 @@ from src.models import Wall
 
 # TODO: put classes for in-game objects in other source files and import them
 from src.models import Player
+from src.models import OccupancyGrid
 
 # MainGame: scene to run the main in-game content
 class MainGame(GameScene):
@@ -37,6 +38,9 @@ class MainGame(GameScene):
         self.good.add(Player("good", 200, 300, self.obstacles))
         self.evil = pygame.sprite.GroupSingle()
         self.evil.add(Player("evil", 600, 300, self.obstacles))
+        
+        # Occupancy grid
+        self.occgrid = OccupancyGrid(12,18)
         # Use this space to initialise anything that only needs to be done when the game/app
         # first starts up and not again
 
@@ -73,6 +77,7 @@ class MainGame(GameScene):
 
         screen.blit(self.good_surf, (0, 0))
         screen.blit(self.evil_surf, (400, 0))
+        self.occgrid.DrawTest(screen)
 
         self.good.draw(screen)
         self.good.update()
