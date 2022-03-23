@@ -3,8 +3,11 @@ from src.resource_manager import ResourceManager
 
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, twin, x, y, obstacles):
+    def __init__(self, parent, twin, x, y):
         super().__init__()
+        
+        # reference to GameScene so they can access methods/data in other game objects
+        self.parent = parent
         
         # Load all animations of character
         self.twin = twin
@@ -18,17 +21,6 @@ class Player(pygame.sprite.Sprite):
             self.img_walk_up.append(ResourceManager().get_image("playergoodback_walk%d.png"%(i))) # good/evil twin look same from behind :)
             self.img_walk_down.append(ResourceManager().get_image("player"+self.twin+"_walk%d.png"%(i)))
         self.image = self.img_idle[0]
-        """
-        self.walk_up = ResourceManager().get_image(f"{self.twin}_up.png")
-        self.walk_up = pygame.transform.scale2x(self.walk_up)
-        self.walk_down = ResourceManager().get_image(f"{self.twin}_down.png")
-        self.walk_down = pygame.transform.scale2x(self.walk_down)
-        self.walk_right = ResourceManager().get_image(f"{self.twin}_right.png")
-        self.walk_right = pygame.transform.scale2x(self.walk_right)
-        self.walk_left = ResourceManager().get_image(f"{self.twin}_left.png")
-        self.walk_left = pygame.transform.scale2x(self.walk_left)
-        self.image = self.walk_up
-        """
 
         # Variables for smooth movement
         self.x = int(x)
@@ -50,7 +42,7 @@ class Player(pygame.sprite.Sprite):
         self.moving = False
 
         # Obstacles
-        self.obstacles = obstacles
+        #self.obstacles = obstacles
 
     def player_input(self):
         keys = pygame.key.get_pressed()
@@ -125,20 +117,25 @@ class Player(pygame.sprite.Sprite):
         # Barrier (not a good implementation of barrier, not precise because has some approximation)
         # mit-mit: updated here so (x,y) will now represent center of player hitbox, not the
         # upper left corner of the graphic
-        if self.twin == "good":
-            if self.x >= 400 - 16:
-                self.x = 400 - 16
-            if self.x <= 16:
-                self.x = 16
-        if self.twin == "evil":
-            if self.x >= 800 - 16:
-                self.x = 800 - 16
-            if self.x <= 400 + 16:
-                self.x = 400 + 16
-        if self.y <= 16:
-            self.y = 16
-        if self.y >= 600 - 16:
-            self.y = 600 - 16
+        
+        # mit-mit: moved this into occmanager.HandleCollision()
+        
+        # handle collisions (from occupancy grid)
+        if self.left_pressed and not self.right_pressed:
+            dx = -1 # expected change in x-direction
+        elif self.right_pressed and not self.left_pressed:
+            dx = 1 # expected change in x-direction
+        else:
+            dx = 0
+        if self.up_pressed and not self.down_pressed:
+            dy = -1 # expected change in y-direction
+        elif self.down_pressed and not self.up_pressed:
+            dy = 1 # expected change in y-direction
+        else:
+            dy = 0
+        (x, y) = self.parent.occmanager.HandleCollision(self.twin, self.x, self.y, dx, dy)
+        self.x = x
+        self.y = y
 
         #self.rect = pygame.Rect(int(self.x), int(self.y), 32, 32)
         # Updated here to make (x,y) the center of the player's hit box
