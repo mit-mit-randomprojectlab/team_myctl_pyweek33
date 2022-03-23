@@ -5,12 +5,13 @@ class Spritesheet:
     def __init__(self, filename):
         self.filename = filename
         self.sprite_sheet = pygame.image.load(filename).convert()
-        with open("sprites.json") as f:
+        self.meta_data = self.filename.replace("png", "json")
+        with open(self.meta_data) as f:
             self.data = json.load(f)
         f.close()
 
     def get_sprite(self, x, y, w, h):
-        sprite = pygame.surface(w, h)
+        sprite = pygame.Surface((w, h))
         # I just put 0,0 for now, not sure what it will be later or how to go about this yet
         sprite.blit(self.sprite_sheet, (0, 0), (x, y, w, h))
         return sprite
