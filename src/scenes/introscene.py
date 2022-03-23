@@ -21,8 +21,8 @@ scene_data = []
 # image: <gfx_tag> <snd_tag>
 scene_data.append(['image','intro001','test001'])
 scene_data.append(['image','intro001','test002'])
-scene_data.append(['image','evilface_evil','test001'])
-scene_data.append(['image','goodface_concern','test002'])
+scene_data.append(['image','intro002','test001'])
+scene_data.append(['image','intro002','test002'])
 
 # conv: <left_gfx_tag> <right_gfx_tag> <snd_tag>
 scene_data.append(['conv',None,None,'test001','scientist'])
