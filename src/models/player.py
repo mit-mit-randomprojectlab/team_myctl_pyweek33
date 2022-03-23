@@ -3,8 +3,11 @@ from src.resource_manager import ResourceManager
 
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, twin, x, y, obstacles):
+    def __init__(self, parent, twin, x, y, obstacles):
         super().__init__()
+        
+        # reference to GameScene so they can access methods/data in other game objects
+        self.parent = parent
         
         # Load all animations of character
         self.twin = twin
@@ -125,20 +128,25 @@ class Player(pygame.sprite.Sprite):
         # Barrier (not a good implementation of barrier, not precise because has some approximation)
         # mit-mit: updated here so (x,y) will now represent center of player hitbox, not the
         # upper left corner of the graphic
-        if self.twin == "good":
-            if self.x >= 400 - 16:
-                self.x = 400 - 16
-            if self.x <= 16:
-                self.x = 16
-        if self.twin == "evil":
-            if self.x >= 800 - 16:
-                self.x = 800 - 16
-            if self.x <= 400 + 16:
-                self.x = 400 + 16
-        if self.y <= 16:
-            self.y = 16
-        if self.y >= 600 - 16:
-            self.y = 600 - 16
+        
+        # mit-mit: moved this into occmanager.HandleCollision()
+        
+        # handle collisions (from occupancy grid)
+        if self.left_pressed and not self.right_pressed:
+            dx = -1 # expected change in x-direction
+        elif self.right_pressed and not self.left_pressed:
+            dx = 1 # expected change in x-direction
+        else:
+            dx = 0
+        if self.up_pressed and not self.down_pressed:
+            dy = -1 # expected change in y-direction
+        elif self.down_pressed and not self.up_pressed:
+            dy = 1 # expected change in y-direction
+        else:
+            dy = 0
+        (x, y) = self.parent.occmanager.HandleCollision(self.twin, self.x, self.y, dx, dy)
+        self.x = x
+        self.y = y
 
         #self.rect = pygame.Rect(int(self.x), int(self.y), 32, 32)
         # Updated here to make (x,y) the center of the player's hit box
