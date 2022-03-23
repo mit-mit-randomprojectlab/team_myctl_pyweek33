@@ -17,6 +17,18 @@ def init(mainpath, window_size):
     # Load sprites
     sprites = [
         "absol.png",
+        "playergood_idle0.png",
+        "playergood_idle1.png",
+        "playergood_idle2.png",
+        "playergood_walk0.png",
+        "playergood_walk1.png",
+        "playergood_walk2.png",
+        "playergood_walk3.png",
+        "playergoodback_walk0.png",
+        "playergoodback_walk1.png",
+        "playergoodback_walk2.png",
+        "playergoodback_walk3.png",
+        "tilemap001.png",
     ]
     for sprite in sprites:
         ResourceManager().get_image(sprite)
