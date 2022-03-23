@@ -3,7 +3,7 @@ from src.resource_manager import ResourceManager
 
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, parent, twin, x, y, obstacles):
+    def __init__(self, parent, twin, x, y):
         super().__init__()
         
         # reference to GameScene so they can access methods/data in other game objects
@@ -21,17 +21,6 @@ class Player(pygame.sprite.Sprite):
             self.img_walk_up.append(ResourceManager().get_image("playergoodback_walk%d.png"%(i))) # good/evil twin look same from behind :)
             self.img_walk_down.append(ResourceManager().get_image("player"+self.twin+"_walk%d.png"%(i)))
         self.image = self.img_idle[0]
-        """
-        self.walk_up = ResourceManager().get_image(f"{self.twin}_up.png")
-        self.walk_up = pygame.transform.scale2x(self.walk_up)
-        self.walk_down = ResourceManager().get_image(f"{self.twin}_down.png")
-        self.walk_down = pygame.transform.scale2x(self.walk_down)
-        self.walk_right = ResourceManager().get_image(f"{self.twin}_right.png")
-        self.walk_right = pygame.transform.scale2x(self.walk_right)
-        self.walk_left = ResourceManager().get_image(f"{self.twin}_left.png")
-        self.walk_left = pygame.transform.scale2x(self.walk_left)
-        self.image = self.walk_up
-        """
 
         # Variables for smooth movement
         self.x = int(x)
@@ -53,7 +42,7 @@ class Player(pygame.sprite.Sprite):
         self.moving = False
 
         # Obstacles
-        self.obstacles = obstacles
+        #self.obstacles = obstacles
 
     def player_input(self):
         keys = pygame.key.get_pressed()

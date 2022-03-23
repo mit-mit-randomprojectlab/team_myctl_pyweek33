@@ -29,20 +29,20 @@ class MainGame(GameScene):
         self.good_surf = pygame.Surface((400, 600))
         self.evil_surf = pygame.Surface((400, 600))
 
-        # Obstacles
-        self.obstacles = pygame.sprite.Group()
-        self.obstacles.add(Wall(600, 300))
+        # Obstacles (no longer used: using occupancy grid now)
+        #self.obstacles = pygame.sprite.Group()
+        #self.obstacles.add(Wall(600, 300))
 
         # Player
         # mit-mit: added reference of this GameScene to player so they can access the
         # occmanager: not sure if this is the best practise :)?
         self.good = pygame.sprite.GroupSingle()
-        self.good.add(Player(self,"good", 200, 300, self.obstacles))
+        self.good.add(Player(self,"good", 200, 300))
         self.evil = pygame.sprite.GroupSingle()
-        self.evil.add(Player(self,"evil", 600, 300, self.obstacles))
+        self.evil.add(Player(self,"evil", 600, 300))
         
         # Occupancy grid
-        self.occmanager = OccupancyManager(12,18,offset_good=(0,0),offset_evil=(400,0))
+        self.occmanager = OccupancyManager(12,18,offset_good=(8,12),offset_evil=(408,12))
         # Use this space to initialise anything that only needs to be done when the game/app
         # first starts up and not again
 
@@ -85,8 +85,8 @@ class MainGame(GameScene):
         self.good.update()
         self.evil.draw(screen)
         self.evil.update()
-        self.obstacles.draw(screen)
-        self.obstacles.update()
+        #self.obstacles.draw(screen)
+        #self.obstacles.update()
 
         # TODO: I recommend all objects that need to be drawn have their own draw() method
         # and these all get called here

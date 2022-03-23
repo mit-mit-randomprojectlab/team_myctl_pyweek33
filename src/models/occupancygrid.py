@@ -192,8 +192,7 @@ class OccupancyGrid():
             for ix in range(self.nx):
                 pos = (self.tilesize*ix+self.offset[0],self.tilesize*iy+self.offset[1],self.tilesize,self.tilesize)
                 if self.occ[iy][ix] == True:
-                    pygame.draw.rect(screen,(255,255,255),pos)
-                else:
-                    pygame.draw.rect(screen,(0,0,0),pos)
+                    pygame.draw.rect(screen,(255,0,0),pos)
+                    
     
     
