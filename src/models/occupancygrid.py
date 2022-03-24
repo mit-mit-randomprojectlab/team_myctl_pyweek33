@@ -1,13 +1,15 @@
 import pygame
 from src.resource_manager import ResourceManager
 
+import os, csv
+
 from math import *
 
 # OccupancyManager: wraps two occupancy grids
 class OccupancyManager():
-    def __init__(self, nx, ny, offset_good=(0,0), offset_evil=(400,0)):
-        self.occ_good = OccupancyGrid('good', nx, ny, offset=offset_good, tilesize=32)
-        self.occ_evil = OccupancyGrid('evil', nx, ny, offset=offset_evil, tilesize=32)
+    def __init__(self, nx, ny, level_file_good, level_file_evil, offset_good=(0,0), offset_evil=(400,0)):
+        self.occ_good = OccupancyGrid('good', nx, ny, level_file_good, offset=offset_good, tilesize=32)
+        self.occ_evil = OccupancyGrid('evil', nx, ny, level_file_evil, offset=offset_evil, tilesize=32)
     
     def HandleCollision(self, twin, x, y, dx, dy):
         if twin == 'good':
@@ -22,19 +24,22 @@ class OccupancyManager():
 
 # OccupancyMap: implementation of occupancy grid
 class OccupancyGrid():
-    def __init__(self, type, nx, ny, offset=(0,0), tilesize=32):
+    def __init__(self, type, nx, ny, level_file, offset=(0,0), tilesize=32):
         self.nx = nx
         self.ny = ny
         self.offset = offset
         self.tilesize = tilesize
         
-        # some test data for now, will load from level files ...
+        # Initialise occupancy
         self.occ = []
         for iy in range(self.ny):
             self.occ.append([])
             for ix in range(self.nx):
                 self.occ[-1].append(False)
         
+        self.set_occupancy(level_file)
+        
+        """
         self.occ[5][5] = True
         self.occ[6][5] = True
         if type == 'good':
@@ -53,6 +58,27 @@ class OccupancyGrid():
             self.occ[9][7] = True
             self.occ[10][7] = True
             self.occ[11][7] = True
+        """
+    
+    def read_csv(self, filename):
+        map = []
+        with open(os.path.join(filename)) as data:
+            data = csv.reader(data, delimiter=",")
+            for row in data:
+                map.append(list(row))
+        return map
+
+    def set_occupancy(self, filename):
+        tiles = []
+        map = self.read_csv(filename)
+        x, y = 0, 0
+        for row in map:
+            x = 0
+            for tile in row:
+                if not tile == "-1":
+                    self.occ[y][x] = True
+                x += 1
+            y += 1
     
     # GetTileIndex: return (column,row) of tile for a point
     def GetTileIndex(self, x, y):

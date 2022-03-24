@@ -21,6 +21,18 @@ class Player(pygame.sprite.Sprite):
             self.img_walk_up.append(ResourceManager().get_image("playergoodback_walk%d.png"%(i))) # good/evil twin look same from behind :)
             self.img_walk_down.append(ResourceManager().get_image("player"+self.twin+"_walk%d.png"%(i)))
         self.image = self.img_idle[0]
+        
+        # hacking here to fix rendering glitches
+        # some pygame issue with rendering multiple alpha channel images
+        # on top of one another: falling back to no alpha
+        for i in range(3):
+            self.img_idle[i].convert()
+            self.img_idle[i].set_colorkey((255,0,255))
+        for i in range(4):
+            self.img_walk_up[i].convert()
+            self.img_walk_up[i].set_colorkey((255,0,255))
+            self.img_walk_down[i].convert()
+            self.img_walk_down[i].set_colorkey((255,0,255))
 
         # Variables for smooth movement
         self.x = int(x)
@@ -145,3 +157,4 @@ class Player(pygame.sprite.Sprite):
         self.player_input()
         self.animation_state()
         self.movement()
+    

@@ -18,6 +18,8 @@ from src.models import Wall
 # TODO: put classes for in-game objects in other source files and import them
 from src.models import Player
 from src.models import OccupancyManager
+from src.models import Spritesheet
+from src.models import TileMap
 
 # MainGame: scene to run the main in-game content
 class MainGame(GameScene):
@@ -28,21 +30,7 @@ class MainGame(GameScene):
         # Background
         self.good_surf = pygame.Surface((400, 600))
         self.evil_surf = pygame.Surface((400, 600))
-
-        # Obstacles (no longer used: using occupancy grid now)
-        #self.obstacles = pygame.sprite.Group()
-        #self.obstacles.add(Wall(600, 300))
-
-        # Player
-        # mit-mit: added reference of this GameScene to player so they can access the
-        # occmanager: not sure if this is the best practise :)?
-        self.good = pygame.sprite.GroupSingle()
-        self.good.add(Player(self,"good", 200, 300))
-        self.evil = pygame.sprite.GroupSingle()
-        self.evil.add(Player(self,"evil", 600, 300))
         
-        # Occupancy grid
-        self.occmanager = OccupancyManager(12,18,offset_good=(8,12),offset_evil=(408,12))
         # Use this space to initialise anything that only needs to be done when the game/app
         # first starts up and not again
 
@@ -52,7 +40,32 @@ class MainGame(GameScene):
         # back to this scene (i.e. could happen multiple time in a game).
         # I recommend re-instantiating in-game objects here (e.g. like the player, and put
         # the player starting data in it's __init__() method etc. ...
-        pass
+        
+        # the level we will load
+        self.level = 'level1'
+        
+        # load the sprite sheet for tilemap
+        sheetpath = os.path.join(constants.RESOURCES_PATH,'spritesheet','spritesheet.png')
+        self.spritesheet = Spritesheet(sheetpath)
+        
+        # Good world tilemap
+        good_lvl_path = os.path.join(constants.RESOURCES_PATH,'levels','good_%s.csv'%(self.level))
+        self.tilemap_good = TileMap(good_lvl_path,self.spritesheet)
+        
+        # Evil world tilemap
+        evil_lvl_path = os.path.join(constants.RESOURCES_PATH,'levels','evil_%s.csv'%(self.level))
+        self.tilemap_evil = TileMap(evil_lvl_path,self.spritesheet)
+        
+        # Player (moved here to help with scene transitions later)
+        self.good = pygame.sprite.GroupSingle()
+        #self.good.add(Player(self,"good", 200, 300))
+        self.good.add(Player(self,"good", 32*3, 32*3))
+        self.evil = pygame.sprite.GroupSingle()
+        #self.evil.add(Player(self,"evil", 600, 300))
+        self.evil.add(Player(self,"evil", 32*3+400, 32*3))
+        
+        # Occupancy grid (moved here to help with scene transitions later)
+        self.occmanager = OccupancyManager(12,18,good_lvl_path,evil_lvl_path,offset_good=(8,12),offset_evil=(408,12))
 
     def on_update(self):
         pass
@@ -72,15 +85,22 @@ class MainGame(GameScene):
 
     def draw_game(self, screen):
 
-        # fill background (write over previously drawn data from past frames)
         screen.fill(constants.COLOR.BLACK.value)
+        
+        # background for each world
         self.good_surf.fill((208, 247, 247))
         self.evil_surf.fill((228, 184, 255))
-
         screen.blit(self.good_surf, (0, 0))
         screen.blit(self.evil_surf, (400, 0))
-        self.occmanager.DrawTest(screen)
-
+        
+        # Draw tilemap
+        screen.blit(self.tilemap_good.map_surface, (8,12))
+        screen.blit(self.tilemap_evil.map_surface, (408,12))
+        
+        # draw occupancy grid
+        #self.occmanager.DrawTest(screen)
+        
+        # Draw player
         self.good.draw(screen)
         self.good.update()
         self.evil.draw(screen)
