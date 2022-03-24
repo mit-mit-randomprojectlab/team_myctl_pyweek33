@@ -68,7 +68,8 @@ class MainGame(GameScene):
         self.occmanager = OccupancyManager(12,18,good_lvl_path,evil_lvl_path,offset_good=(8,12),offset_evil=(408,12))
 
     def on_update(self):
-        pass
+        self.tilemap_good.UpdateAnimations()
+        self.tilemap_evil.UpdateAnimations()
 
         # I suggest all in game objects that need updating should have their own update()
         # method, and these are all called here

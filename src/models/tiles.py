@@ -18,6 +18,14 @@ class TileMap():
         self.tile_size = 32
         self.start_x, self.start_y = 0, 0
         self.spritesheet = spritesheet
+        
+        # track tiles that need to animate
+        self.ani_list = []
+        self.ani_to = 0
+        self.ani_frame = 0
+        self.graytile = pygame.Surface((32, 32))
+        self.graytile.fill((100,100,100))
+        
         self.tiles = self.load_tiles(filename)
         self.map_surface = pygame.Surface((self.map_w, self.map_h))
         #self.map_surface.set_colorkey(0, 0, 0)
@@ -26,6 +34,23 @@ class TileMap():
     def draw_map(self, surface):
         surface.blit(self.map_surface, (0, 0))
     
+    # UpdateAnimations: get the animated tiles re-drawn when needed
+    def UpdateAnimations(self):
+        
+        # special list of tiles to animate
+        for a in self.ani_list:
+            (x,y) = a[0]
+            frames = a[1]
+            self.map_surface.blit(self.graytile, (x,y))
+            self.map_surface.blit(self.spritesheet.sprite_sheet, (x,y), area=(32*frames[self.ani_frame],0,32,32))
+        
+        # animation variables
+        self.ani_to += 1
+        if self.ani_to > 3:
+            self.ani_to = 0
+            self.ani_frame += 1
+            if self.ani_frame > 3:
+                self.ani_frame = 0
 
     def load_map(self):
         self.map_surface.fill((100,100,100))
@@ -64,15 +89,21 @@ class TileMap():
                 elif tile == "7":
                     tiles.append(Tile("door.png", x * self.tile_size, y * self.tile_size, self.spritesheet))
                 elif tile == "8":
-                    tiles.append(Tile("evil_barrier.png", x * self.tile_size, y * self.tile_size, self.spritesheet))
+                    #tiles.append(Tile("evil_barrier.png", x * self.tile_size, y * self.tile_size, self.spritesheet))
+                    # frame list for animation (top tank)
+                    self.ani_list.append([(x * self.tile_size, y * self.tile_size),[8,10,12,14]])
                 elif tile == "9":
-                    tiles.append(Tile("evil_barrier2.png", x * self.tile_size, y * self.tile_size, self.spritesheet))
+                    #tiles.append(Tile("evil_barrier2.png", x * self.tile_size, y * self.tile_size, self.spritesheet))
+                    # frame list for animation (bottom tank)
+                    self.ani_list.append([(x * self.tile_size, y * self.tile_size),[9,11,13,15]])
                 elif tile == "16":
                     tiles.append(Tile("evil_bumper.png", x * self.tile_size, y * self.tile_size, self.spritesheet))
                 elif tile == "17":
                     tiles.append(Tile("evil_door.png", x * self.tile_size, y * self.tile_size, self.spritesheet))
                 elif tile == "18":
-                    tiles.append(Tile("evil_elec1.png", x * self.tile_size, y * self.tile_size, self.spritesheet))
+                    #tiles.append(Tile("evil_elec1.png", x * self.tile_size, y * self.tile_size, self.spritesheet))
+                    # frame list for animation (electric ball)
+                    self.ani_list.append([(x * self.tile_size, y * self.tile_size),[18,19,20,20]])
                 elif tile == "21":
                     tiles.append(Tile("evil_toxic.png", x * self.tile_size, y * self.tile_size, self.spritesheet))
                 elif tile == "22":
