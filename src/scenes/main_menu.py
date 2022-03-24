@@ -25,8 +25,8 @@ class MainMenu(GameScene):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     if self.button1.collidepoint(mx, my):
-                        self.director.change_scene("maingame", [constants.LEVELS[0]])
-                        #self.director.change_scene("introscene", [])
+                        #self.director.change_scene("maingame", [constants.LEVELS[0]])
+                        self.director.change_scene("introscene", [])
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 self.director.change_scene(None, [])
 
