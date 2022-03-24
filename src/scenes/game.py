@@ -18,6 +18,7 @@ from src.models import Wall
 # TODO: put classes for in-game objects in other source files and import them
 from src.models import Player
 from src.models import OccupancyManager
+from src.models import Crystal
 from src.models import Spritesheet
 from src.models import TileMap
 
@@ -42,7 +43,7 @@ class MainGame(GameScene):
         # the player starting data in it's __init__() method etc. ...
         
         # the level we will load
-        self.level = 'level1'
+        self.level = switchtoargs[0]
         
         # load the sprite sheet for tilemap
         sheetpath = os.path.join(constants.RESOURCES_PATH,'spritesheet','spritesheet.png')
@@ -66,10 +67,53 @@ class MainGame(GameScene):
         
         # Occupancy grid (moved here to help with scene transitions later)
         self.occmanager = OccupancyManager(12,18,good_lvl_path,evil_lvl_path,offset_good=(8,12),offset_evil=(408,12))
+        
+        # UI Stuff (pre-rendered text surfaces)
+        self.fail_text = make_text(
+            "Level Failed!", constants.BIG_FONT, constants.COLOR.WHITE.value, 200, 300
+        )
+        self.complete_text = make_text(
+            "Level Complete!", constants.BIG_FONT, constants.COLOR.WHITE.value, 200, 300
+        )
+        
+        # Green Crystal (goal) location (TODO: should this depend on the level or is it
+        # constant?)
+        posx = 8 + 32*6
+        posy = 12 + 32*17
+        self.crystal = Crystal((posx,posy), self.good)
+        
+        # Game variables
+        self.reach_goal = False # triggered if get green crystal (TODO)
+        self.touch_evil = False # triggered by player if evil touches objects
+        self.touch_evil_loc = (0,0)
+        self.level_complete = False
+        self.level_fail = False
+        self.reset_countdown = 90
 
     def on_update(self):
         self.tilemap_good.UpdateAnimations()
         self.tilemap_evil.UpdateAnimations()
+        
+        self.crystal.Update()
+        if self.crystal.pickedup == True:
+            self.reach_goal = True
+        
+        # check for end level transitions
+        if self.reach_goal:
+            self.level_complete = True
+        elif self.touch_evil:
+            self.level_fail = True
+        if self.reach_goal or self.level_fail:
+            self.reset_countdown -= 1
+            if self.reset_countdown <= 0:
+                if self.level_complete:
+                    ind = constants.LEVELS.index(self.level)
+                    if ind < len(constants.LEVELS)-1: # go to next level
+                        self.director.change_scene("maingame", [constants.LEVELS[ind+1]])
+                    else:
+                        self.director.change_scene("mainmenu", []) # for now
+                elif self.level_fail:
+                    self.director.change_scene("maingame", [self.level])
 
         # I suggest all in game objects that need updating should have their own update()
         # method, and these are all called here
@@ -101,6 +145,13 @@ class MainGame(GameScene):
         # draw occupancy grid
         #self.occmanager.DrawTest(screen)
         
+        # draw flashing tile on level fail
+        if self.level_fail and self.reset_countdown % 10 < 5:
+            pygame.draw.rect(screen,(255,255,255),(self.touch_evil_loc[0],self.touch_evil_loc[1],32,32))
+        
+        # Draw Green Crystal
+        self.crystal.Draw(screen)
+        
         # Draw player
         self.good.draw(screen)
         self.good.update()
@@ -108,6 +159,12 @@ class MainGame(GameScene):
         self.evil.update()
         #self.obstacles.draw(screen)
         #self.obstacles.update()
+        
+        # UI Stuff
+        if self.level_fail:
+            screen.blit(*self.fail_text)
+        elif self.level_complete:
+            screen.blit(*self.complete_text)
 
         # TODO: I recommend all objects that need to be drawn have their own draw() method
         # and these all get called here

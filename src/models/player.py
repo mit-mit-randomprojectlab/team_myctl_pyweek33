@@ -145,7 +145,13 @@ class Player(pygame.sprite.Sprite):
             dy = 1 # expected change in y-direction
         else:
             dy = 0
-        (x, y) = self.parent.occmanager.HandleCollision(self.twin, self.x, self.y, dx, dy)
+        if self.twin == 'good':
+            (x, y) = self.parent.occmanager.HandleCollision(self.twin, self.x, self.y, dx, dy)
+        else:
+            (x, y, touch_evil_loc) = self.parent.occmanager.DetectCollision(self.twin, self.x, self.y)
+            if not touch_evil_loc == None:
+                self.parent.touch_evil = True
+                self.parent.touch_evil_loc = touch_evil_loc
         self.x = x
         self.y = y
 
@@ -154,7 +160,13 @@ class Player(pygame.sprite.Sprite):
         self.rect = pygame.Rect(int(self.x)-16, int(self.y)-16-22, 32, 32)
 
     def update(self):
-        self.player_input()
+        if self.parent.level_complete or self.parent.level_fail:
+            self.left_pressed = False
+            self.right_pressed = False
+            self.up_pressed = False
+            self.down_pressed = False
+        else:
+            self.player_input()
         self.animation_state()
         self.movement()
     

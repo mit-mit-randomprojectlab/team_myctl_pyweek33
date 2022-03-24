@@ -100,7 +100,7 @@ class IntroCutScene(GameScene):
         if self.next == True:
             self.index += 1
             if self.index >= len(scene_data):
-                self.director.change_scene("maingame", [])
+                self.director.change_scene("maingame", [constants.LEVELS[0]])
                 return
             data = scene_data[self.index]
             if data[0] == 'image':
@@ -122,7 +122,7 @@ class IntroCutScene(GameScene):
     def on_event(self, events):
         for event in events:
             if event.type == KEYDOWN and event.key == K_ESCAPE:
-                self.director.change_scene("maingame", [])
+                self.director.change_scene("maingame", [constants.LEVELS[0]])
             elif event.type == KEYDOWN:
                 self.next = True # trigger to next step
                 self.StopVoice()
