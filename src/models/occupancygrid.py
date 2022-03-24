@@ -1,13 +1,15 @@
 import pygame
 from src.resource_manager import ResourceManager
 
+import os, csv
+
 from math import *
 
 # OccupancyManager: wraps two occupancy grids
 class OccupancyManager():
-    def __init__(self, nx, ny, offset_good=(0,0), offset_evil=(400,0)):
-        self.occ_good = OccupancyGrid('good', nx, ny, offset=offset_good, tilesize=32)
-        self.occ_evil = OccupancyGrid('evil', nx, ny, offset=offset_evil, tilesize=32)
+    def __init__(self, nx, ny, level_file_good, level_file_evil, offset_good=(0,0), offset_evil=(400,0)):
+        self.occ_good = OccupancyGrid('good', nx, ny, level_file_good, offset=offset_good, tilesize=32)
+        self.occ_evil = OccupancyGrid('evil', nx, ny, level_file_evil, offset=offset_evil, tilesize=32)
     
     def HandleCollision(self, twin, x, y, dx, dy):
         if twin == 'good':
@@ -16,43 +18,52 @@ class OccupancyManager():
             (xnew, ynew) = self.occ_evil.HandleCollision(x, y, dx, dy)
         return (xnew, ynew)
     
+    def DetectCollision(self, twin, x, y):
+        (xnew, ynew, collision) = self.occ_evil.DetectCollision(x, y)
+        return (xnew, ynew, collision)
+    
     def DrawTest(self, screen):
         self.occ_good.DrawTest(screen)
         self.occ_evil.DrawTest(screen)
 
 # OccupancyMap: implementation of occupancy grid
 class OccupancyGrid():
-    def __init__(self, type, nx, ny, offset=(0,0), tilesize=32):
+    def __init__(self, type, nx, ny, level_file, offset=(0,0), tilesize=32):
         self.nx = nx
         self.ny = ny
         self.offset = offset
         self.tilesize = tilesize
         
-        # some test data for now, will load from level files ...
+        # Initialise occupancy
         self.occ = []
         for iy in range(self.ny):
             self.occ.append([])
             for ix in range(self.nx):
                 self.occ[-1].append(False)
         
-        self.occ[5][5] = True
-        self.occ[6][5] = True
-        if type == 'good':
-            self.occ[6][6] = True
-            self.occ[6][7] = True
-            
-            self.occ[8][8] = True
-            self.occ[11][9] = True
-            self.occ[12][9] = True
-            self.occ[8][9] = True
-            self.occ[10][9] = True
-            self.occ[8][10] = True
-            self.occ[10][10] = True
-            
-            self.occ[8][7] = True
-            self.occ[9][7] = True
-            self.occ[10][7] = True
-            self.occ[11][7] = True
+        self.set_occupancy(level_file)
+    
+    # Reads in level data
+    def read_csv(self, filename):
+        map = []
+        with open(os.path.join(filename)) as data:
+            data = csv.reader(data, delimiter=",")
+            for row in data:
+                map.append(list(row))
+        return map
+        
+    # set occupancy based on any filled tile
+    def set_occupancy(self, filename):
+        tiles = []
+        map = self.read_csv(filename)
+        x, y = 0, 0
+        for row in map:
+            x = 0
+            for tile in row:
+                if not tile == "-1":
+                    self.occ[y][x] = True
+                x += 1
+            y += 1
     
     # GetTileIndex: return (column,row) of tile for a point
     def GetTileIndex(self, x, y):
@@ -70,11 +81,74 @@ class OccupancyGrid():
         else:
             return False
     
+    # DetectCollision: returns true if hitting obstacle
+    def DetectCollision(self, x, y):
+        
+        psize = 30 # player hitbox size
+        
+        x = x-self.offset[0]
+        y = y-self.offset[1]
+        
+        # first fix any hitting game extents
+        xlim = 32*12
+        ylim = 32*18
+        if x >= xlim - 16 - 1:
+            x = xlim - 16 - 1
+        if x <= 16 + 1:
+            x = 16 + 1
+        if y <= 16 + 1:
+            y = 16 + 1
+        if y >= ylim - 16 - 1:
+            y = ylim - 16 - 1
+        newx = x
+        newy = y
+        
+        # Work out collision points around (x,y)
+        ul_ind = self.GetTileIndex(newx-psize/2,newy-psize/2) # corners
+        ur_ind = self.GetTileIndex(newx+psize/2,newy-psize/2)
+        ll_ind = self.GetTileIndex(newx-psize/2,newy+psize/2)
+        lr_ind = self.GetTileIndex(newx+psize/2,newy+psize/2)
+        
+        u_ind = self.GetTileIndex(newx,newy-psize/2) # cardinal points
+        d_ind = self.GetTileIndex(newx,newy+psize/2)
+        l_ind = self.GetTileIndex(newx-psize/2,y)
+        r_ind = self.GetTileIndex(newx+psize/2,y)
+        
+        if self.CheckCollisionTileIndex(ul_ind):
+            pos = (self.tilesize*ul_ind[0]+self.offset[0], self.tilesize*ul_ind[1]+self.offset[1])
+            return (newx+self.offset[0], newy+self.offset[1], pos)
+        if self.CheckCollisionTileIndex(ur_ind):
+            pos = (self.tilesize*ur_ind[0]+self.offset[0], self.tilesize*ur_ind[1]+self.offset[1])
+            return (newx+self.offset[0], newy+self.offset[1], pos)
+        if self.CheckCollisionTileIndex(ll_ind):
+            pos = (self.tilesize*ll_ind[0]+self.offset[0], self.tilesize*ll_ind[1]+self.offset[1])
+            return (newx+self.offset[0], newy+self.offset[1], pos)
+        if self.CheckCollisionTileIndex(lr_ind):
+            pos = (self.tilesize*lr_ind[0]+self.offset[0], self.tilesize*lr_ind[1]+self.offset[1])
+            return (newx+self.offset[0], newy+self.offset[1], pos)
+        
+        if self.CheckCollisionTileIndex(u_ind):
+            pos = (self.tilesize*u_ind[0]+self.offset[0], self.tilesize*u_ind[1]+self.offset[1])
+            return (newx+self.offset[0], newy+self.offset[1], pos)
+        if self.CheckCollisionTileIndex(d_ind):
+            pos = (self.tilesize*d_ind[0]+self.offset[0], self.tilesize*d_ind[1]+self.offset[1])
+            return (newx+self.offset[0], newy+self.offset[1], pos)
+        if self.CheckCollisionTileIndex(l_ind):
+            pos = (self.tilesize*l_ind[0]+self.offset[0], self.tilesize*l_ind[1]+self.offset[1])
+            return (newx+self.offset[0], newy+self.offset[1], pos)
+        if self.CheckCollisionTileIndex(r_ind):
+            pos = (self.tilesize*r_ind[0]+self.offset[0], self.tilesize*r_ind[1]+self.offset[1])
+            return (newx+self.offset[0], newy+self.offset[1], pos)
+        
+        # no collision
+        return (newx+self.offset[0], newy+self.offset[1], None)
+        
+    
     # HandleCollision: handles how to constrain an object trying to move from (x,y)
     # to (x+dx,y+dy) in occupancy map. Returns constrained (x, y)
     def HandleCollision(self, x, y, dx, dy):
         
-        psize = 30 # player hitbox size
+        psize = 28 # player hitbox size
         
         x = x-self.offset[0]
         y = y-self.offset[1]
@@ -193,6 +267,24 @@ class OccupancyGrid():
                 pos = (self.tilesize*ix+self.offset[0],self.tilesize*iy+self.offset[1],self.tilesize,self.tilesize)
                 if self.occ[iy][ix] == True:
                     pygame.draw.rect(screen,(255,0,0),pos)
-                    
+
+# Crystal: goal location thing
+class Crystal():
+    def __init__(self, pos, player_good):
+        self.pos = pos
+        self.pickedup = False
+        self.player = player_good
+        self.ani_to = 0
     
+    def Update(self):
+        dx = self.pos[0]-self.player.sprite.x
+        dy = self.pos[1]-self.player.sprite.y
+        if sqrt(pow(dx,2)+pow(dy,2)) < 20:
+            self.pickedup = True
+        self.ani_to += 1
+    
+    def Draw(self, screen):
+        if self.pickedup == False or self.ani_to % 10 < 5:
+            pygame.draw.rect(screen,(0,255,0),(self.pos[0]-16,self.pos[1]-16,32,32))
+            
     

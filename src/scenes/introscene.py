@@ -19,19 +19,39 @@ import src.resources
 scene_data = []
 
 # image: <gfx_tag> <snd_tag>
-scene_data.append(['image','intro001','test001'])
-scene_data.append(['image','intro001','test002'])
-scene_data.append(['image','intro002','test001'])
-scene_data.append(['image','intro002','test002'])
-scene_data.append(['image','intro003','test001'])
-scene_data.append(['image','intro003','test002'])
+
+scene_data.append(['image','intro001','introsci001'])
+scene_data.append(['image','intro002','introsci002'])
+scene_data.append(['image','intro003','introsci003'])
+scene_data.append(['image','intro004','introsci004'])
+scene_data.append(['image','intro004','introsci005'])
+#scene_data.append(['image','intro003','introsci006'])
+scene_data.append(['image','intro001','scream'])
+
 
 # conv: <left_gfx_tag> <right_gfx_tag> <snd_tag>
-scene_data.append(['conv',None,None,'test001','scientist'])
-scene_data.append(['conv',None,'evilface_happy','test001','evil'])
-scene_data.append(['conv','goodface_happy','evilface_happy','test002','good'])
-scene_data.append(['conv','goodface_happy','evilface_evil','test001','evil'])
-scene_data.append(['conv','goodface_concern','evilface_evil','test002','good'])
+scene_data.append(['conv','goodface_happy','evilface_happy','scientist001','scientist','loop001a'])
+
+scene_data.append(['conv','goodface_happy','evilface_happy','evil001','evil'])
+
+scene_data.append(['conv','goodface_happy','evilface_happy','scientist002','scientist'])
+
+scene_data.append(['conv','goodface_happy2','evilface_suprise','good001','good'])
+
+scene_data.append(['conv','goodface_happy','evilface_happy','scientist003','scientist'])
+
+scene_data.append(['conv','goodface_happy','evilface_suprise','good002','good'])
+scene_data.append(['conv','goodface_happy','evilface_suprise','good002a','good'])
+
+scene_data.append(['conv','goodface_concern','evilface_evil','evil002a','evil'])
+scene_data.append(['conv','goodface_concern','evilface_evil','evil002b','evil'])
+
+scene_data.append(['conv','goodface_concern','evilface_evil','good003','good'])
+
+scene_data.append(['conv','goodface_concern','evilface_suprise','evil003a','evil'])
+scene_data.append(['conv','goodface_concern','evilface_evil','evil003b','evil'])
+
+scene_data.append(['conv','goodface_concern','evilface_evil','good004','good'])
 
 # MainGame: scene to run the main in-game content
 class IntroCutScene(GameScene):
@@ -78,6 +98,8 @@ class IntroCutScene(GameScene):
         
         self.index = -1
         self.next = True
+        
+        self.currentmusic = None
     
     def PlayVoice(self, tag):
         self.voice_channel.play(self.resource_snd[tag])
@@ -93,6 +115,15 @@ class IntroCutScene(GameScene):
     
     def CheckVoice(self):
         return self.voice_channel.get_busy()
+    
+    def SwitchMusic(self, tag):
+        if not self.currentmusic == tag:
+            pygame.mixer.music.stop()
+            path = os.path.join(constants.RESOURCES_PATH,'music','%s.ogg'%(tag))
+            pygame.mixer.music.load(path)
+            pygame.mixer.music.set_volume(0.1)
+            pygame.mixer.music.play(-1)
+            self.currentmusic = tag
 
     def on_update(self):
         
@@ -100,7 +131,9 @@ class IntroCutScene(GameScene):
         if self.next == True:
             self.index += 1
             if self.index >= len(scene_data):
-                self.director.change_scene("maingame", [])
+                self.director.change_scene("maingame", [constants.LEVELS[0]])
+                self.StopVoice()
+                pygame.mixer.music.stop()
                 return
             data = scene_data[self.index]
             if data[0] == 'image':
@@ -110,6 +143,8 @@ class IntroCutScene(GameScene):
                 snd_tag = data[3]
                 self.PlayVoice(snd_tag)
             self.next = False
+            if len(data) == 6:
+                self.SwitchMusic(data[5])
         elif not self.CheckVoice():
             self.next = True
         
@@ -122,7 +157,9 @@ class IntroCutScene(GameScene):
     def on_event(self, events):
         for event in events:
             if event.type == KEYDOWN and event.key == K_ESCAPE:
-                self.director.change_scene("maingame", [])
+                self.director.change_scene("maingame", [constants.LEVELS[0]])
+                self.StopVoice()
+                pygame.mixer.music.stop()
             elif event.type == KEYDOWN:
                 self.next = True # trigger to next step
                 self.StopVoice()

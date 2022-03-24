@@ -21,6 +21,18 @@ class Player(pygame.sprite.Sprite):
             self.img_walk_up.append(ResourceManager().get_image("playergoodback_walk%d.png"%(i))) # good/evil twin look same from behind :)
             self.img_walk_down.append(ResourceManager().get_image("player"+self.twin+"_walk%d.png"%(i)))
         self.image = self.img_idle[0]
+        
+        # hacking here to fix rendering glitches
+        # some pygame issue with rendering multiple alpha channel images
+        # on top of one another: falling back to no alpha
+        for i in range(3):
+            self.img_idle[i].convert()
+            self.img_idle[i].set_colorkey((255,0,255))
+        for i in range(4):
+            self.img_walk_up[i].convert()
+            self.img_walk_up[i].set_colorkey((255,0,255))
+            self.img_walk_down[i].convert()
+            self.img_walk_down[i].set_colorkey((255,0,255))
 
         # Variables for smooth movement
         self.x = int(x)
@@ -133,7 +145,13 @@ class Player(pygame.sprite.Sprite):
             dy = 1 # expected change in y-direction
         else:
             dy = 0
-        (x, y) = self.parent.occmanager.HandleCollision(self.twin, self.x, self.y, dx, dy)
+        if self.twin == 'good':
+            (x, y) = self.parent.occmanager.HandleCollision(self.twin, self.x, self.y, dx, dy)
+        else:
+            (x, y, touch_evil_loc) = self.parent.occmanager.DetectCollision(self.twin, self.x, self.y)
+            if not touch_evil_loc == None:
+                self.parent.touch_evil = True
+                self.parent.touch_evil_loc = touch_evil_loc
         self.x = x
         self.y = y
 
@@ -142,6 +160,13 @@ class Player(pygame.sprite.Sprite):
         self.rect = pygame.Rect(int(self.x)-16, int(self.y)-16-22, 32, 32)
 
     def update(self):
-        self.player_input()
+        if self.parent.level_complete or self.parent.level_fail:
+            self.left_pressed = False
+            self.right_pressed = False
+            self.up_pressed = False
+            self.down_pressed = False
+        else:
+            self.player_input()
         self.animation_state()
         self.movement()
+    
