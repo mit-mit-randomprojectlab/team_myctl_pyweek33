@@ -25,8 +25,9 @@ scene_data.append(['image','intro002','introsci002'])
 scene_data.append(['image','intro003','introsci003'])
 scene_data.append(['image','intro004','introsci004'])
 scene_data.append(['image','intro004','introsci005'])
-#scene_data.append(['image','intro003','introsci006'])
-scene_data.append(['image','intro001','scream'])
+scene_data.append(['image','intro005','introsci006'])
+scene_data.append(['image','intro006','intro_machine'])
+scene_data.append(['image','intro007','scream'])
 
 
 # conv: <left_gfx_tag> <right_gfx_tag> <snd_tag>
@@ -150,7 +151,11 @@ class IntroCutScene(GameScene):
         
         # Update animations
         self.ani_to += 1
-        if self.ani_to > 3:
+        if scene_data[self.index][1] == 'intro007':
+            delay = 10
+        else:
+            delay = 3
+        if self.ani_to > delay:
             self.ani_to = 0
             self.ani_frame = (self.ani_frame+1) % 2
 
