@@ -25,8 +25,9 @@ scene_data.append(['image','intro002','introsci002'])
 scene_data.append(['image','intro003','introsci003'])
 scene_data.append(['image','intro004','introsci004'])
 scene_data.append(['image','intro004','introsci005'])
-#scene_data.append(['image','intro003','introsci006'])
-scene_data.append(['image','intro001','scream'])
+scene_data.append(['image','intro005','introsci006'])
+scene_data.append(['image','intro006','intro_machine'])
+scene_data.append(['image','intro007','scream'])
 
 
 # conv: <left_gfx_tag> <right_gfx_tag> <snd_tag>
@@ -41,10 +42,10 @@ scene_data.append(['conv','goodface_happy2','evilface_suprise','good001','good']
 scene_data.append(['conv','goodface_happy','evilface_happy','scientist003','scientist'])
 
 scene_data.append(['conv','goodface_happy','evilface_suprise','good002','good'])
-scene_data.append(['conv','goodface_happy','evilface_suprise','good002a','good'])
+scene_data.append(['conv','goodface_happy','evilface_suprise','good002a','good','loop001a','crystal'])
 
 scene_data.append(['conv','goodface_concern','evilface_evil','evil002a','evil'])
-scene_data.append(['conv','goodface_concern','evilface_evil','evil002b','evil'])
+scene_data.append(['conv','goodface_concern','evilface_evil','evil002b','evil','loop001a','evil'])
 
 scene_data.append(['conv','goodface_concern','evilface_evil','good003','good'])
 
@@ -98,6 +99,8 @@ class IntroCutScene(GameScene):
         
         self.index = -1
         self.next = True
+        self.extragfx = None
+        self.fadeto = 0
         
         self.currentmusic = None
     
@@ -124,7 +127,14 @@ class IntroCutScene(GameScene):
             pygame.mixer.music.set_volume(0.1)
             pygame.mixer.music.play(-1)
             self.currentmusic = tag
-
+        
+    def ExtraGraphics(self, tag):
+        self.fadeto = 30
+        self.extragfx = tag
+    
+    def ResetExtraGraphics(self):
+        self.extragfx = None
+        
     def on_update(self):
         
         # pass new data
@@ -145,14 +155,24 @@ class IntroCutScene(GameScene):
             self.next = False
             if len(data) == 6:
                 self.SwitchMusic(data[5])
+            if len(data) == 7:
+                self.ExtraGraphics(data[6])
+            else:
+                self.ResetExtraGraphics()
         elif not self.CheckVoice():
             self.next = True
         
         # Update animations
         self.ani_to += 1
-        if self.ani_to > 3:
+        if scene_data[self.index][1] == 'intro007':
+            delay = 10
+        else:
+            delay = 3
+        if self.ani_to > delay:
             self.ani_to = 0
             self.ani_frame = (self.ani_frame+1) % 2
+        if self.fadeto > 0:
+            self.fadeto -= 1
 
     def on_event(self, events):
         for event in events:
@@ -175,6 +195,7 @@ class IntroCutScene(GameScene):
         elif data[0] == 'conv':
             
             screen.fill((100,100,100))
+            screen.blit(self.resource_gfx['level_space'], (0, 0))
             screen.blit(self.resource_gfx['sil'], (250, 0))
             
             who_speak = data[4]
@@ -200,6 +221,13 @@ class IntroCutScene(GameScene):
                 else:
                     self.resource_gfx[gfxright_tag].set_alpha(128)
                 screen.blit(self.resource_gfx[gfxright_tag], (500, 300))
+            
+            if self.extragfx == 'crystal':
+                self.resource_gfx['crystal_big'].set_alpha(int(255*(30-self.fadeto)/30))
+                screen.blit(self.resource_gfx['crystal_big'], (300, 300))
+            elif self.extragfx == 'evil':
+                self.resource_gfx['evil_objects'].set_alpha(int(255*(30-self.fadeto)/30))
+                screen.blit(self.resource_gfx['evil_objects'], (400, 230))
             
         pygame.display.update()
         

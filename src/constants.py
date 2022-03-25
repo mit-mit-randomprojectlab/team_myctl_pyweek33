@@ -2,6 +2,7 @@ from pathlib import Path
 import pygame
 import src
 from enum import Enum
+import os
 
 # Single place to define project constants
 
@@ -17,7 +18,8 @@ RESOURCES_PATH = Path(src.__file__).parent.parent.absolute() / "data"
 TITLE_FONT = pygame.font.SysFont(None, 40)
 MENU_ITEM_FONT = pygame.font.SysFont(None, 30)
 
-BIG_FONT = pygame.font.SysFont(None, 80)
+#BIG_FONT = pygame.font.SysFont(None, 80)
+BIG_FONT = pygame.font.Font(os.path.join(RESOURCES_PATH,'BabyMarker-1GZaL.ttf'), 40)
 
 LEVELS = [
     "level1",

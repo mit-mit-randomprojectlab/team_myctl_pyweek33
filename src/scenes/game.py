@@ -72,11 +72,17 @@ class MainGame(GameScene):
         
         # UI Stuff (pre-rendered text surfaces)
         self.fail_text = make_text(
-            "Level Failed!", constants.BIG_FONT, constants.COLOR.WHITE.value, 200, 300
+            "Level Failed!", constants.BIG_FONT, (250,0,0), 200, 10
         )
+        self.fail_text[1][0] = 400-self.fail_text[1][2]/2 # center in x
+        self.fail_text[0].convert() # annoying pygame alpha bug-fix
+        self.fail_text[0].set_colorkey((0,0,0))
         self.complete_text = make_text(
-            "Level Complete!", constants.BIG_FONT, constants.COLOR.WHITE.value, 200, 300
+            "Level Complete!", constants.BIG_FONT, (0,100,250), 200, 10
         )
+        self.complete_text[1][0] = 400-self.complete_text[1][2]/2 # center in x
+        self.complete_text[0].convert() 
+        #self.complete_text[0].set_colorkey((0,0,0))
         
         # Green Crystal (goal) location
         self.crystal = Crystal(self.tilemap_good.crystal_loc, self.good, self.spritesheet.sprite_sheet)
@@ -138,8 +144,8 @@ class MainGame(GameScene):
         screen.fill(constants.COLOR.BLACK.value)
         
         # background for each world
-        self.good_surf.fill((208, 247, 247))
-        self.evil_surf.fill((228, 184, 255))
+        self.good_surf.fill((0, 0, 100))
+        self.evil_surf.fill((100, 0, 0))
         screen.blit(self.good_surf, (0, 0))
         screen.blit(self.evil_surf, (400, 0))
         
@@ -167,8 +173,14 @@ class MainGame(GameScene):
         
         # UI Stuff
         if self.level_fail:
+            rect = self.fail_text[1][:]
+            rect[0] -= 8
+            pygame.draw.rect(screen,(0,0,0),rect)
             screen.blit(*self.fail_text)
         elif self.level_complete:
+            rect = self.complete_text[1][:]
+            rect[0] -= 8
+            pygame.draw.rect(screen,(0,0,0),rect)
             screen.blit(*self.complete_text)
 
         # TODO: I recommend all objects that need to be drawn have their own draw() method
