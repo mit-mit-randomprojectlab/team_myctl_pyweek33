@@ -34,9 +34,10 @@ def init(mainpath, window_size):
         ResourceManager().get_image(sprite)
 
     # Load sound data
-    # TODO
-
-    # Load music data
-    # TODO
+    sounds = [
+        "test001.ogg",
+    ]
+    for sound in sounds:
+        ResourceManager().get_sound(sound)
 
     # etc ....

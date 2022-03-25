@@ -22,6 +22,8 @@ from src.models import Crystal
 from src.models import Spritesheet
 from src.models import TileMap
 
+from src.resource_manager import ResourceManager
+
 # MainGame: scene to run the main in-game content
 class MainGame(GameScene):
     def __init__(self, director, window_size):
@@ -94,12 +96,18 @@ class MainGame(GameScene):
         self.crystal.Update()
         if self.crystal.pickedup == True:
             self.reach_goal = True
+            if self.reset_countdown == 90:
+                # for example play sound for complete level
+                ResourceManager().get_sound("good_win.ogg","sound").play()
         
         # check for end level transitions
         if self.reach_goal:
             self.level_complete = True
         elif self.touch_evil:
             self.level_fail = True
+            if self.reset_countdown == 90:
+                # for example play sound for failed level
+                ResourceManager().get_sound("evilfailure.ogg","sound").play()
         if self.reach_goal or self.level_fail:
             self.reset_countdown -= 1
             if self.reset_countdown <= 0:
