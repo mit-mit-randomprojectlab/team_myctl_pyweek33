@@ -1,5 +1,7 @@
 import pygame
 from src.resource_manager import ResourceManager
+import time
+
 
 
 class Player(pygame.sprite.Sprite):
@@ -166,6 +168,8 @@ class Player(pygame.sprite.Sprite):
             self.up_pressed = False
             self.down_pressed = False
         else:
+            if self.left_pressed or self.right_pressed or self.up_pressed or self.down_pressed:
+                ResourceManager().get_sound("walking.ogg", "sounds").play()
             self.player_input()
         self.animation_state()
         self.movement()
