@@ -34,6 +34,12 @@ class MainGame(GameScene):
         self.good_surf = pygame.Surface((400, 600))
         self.evil_surf = pygame.Surface((400, 600))
         
+        # Test
+        self.bg_surf = pygame.Surface(window_size)
+        self.bg_surf.fill((0,0,0))
+        self.bg_surf.convert()
+        self.bg_surf.set_alpha(128)
+        
         # Use this space to initialise anything that only needs to be done when the game/app
         # first starts up and not again
 
@@ -61,10 +67,8 @@ class MainGame(GameScene):
         
         # Player (moved here to help with scene transitions later)
         self.good = pygame.sprite.GroupSingle()
-        #self.good.add(Player(self,"good", 200, 300))
         self.good.add(Player(self,"good", 32*3, 32*3))
         self.evil = pygame.sprite.GroupSingle()
-        #self.evil.add(Player(self,"evil", 600, 300))
         self.evil.add(Player(self,"evil", 32*3+400, 32*3))
         
         # Occupancy grid (moved here to help with scene transitions later)
@@ -75,14 +79,17 @@ class MainGame(GameScene):
             "Level Failed!", constants.BIG_FONT, (250,0,0), 200, 10
         )
         self.fail_text[1][0] = 400-self.fail_text[1][2]/2 # center in x
-        self.fail_text[0].convert() # annoying pygame alpha bug-fix
-        self.fail_text[0].set_colorkey((0,0,0))
+        self.fail_text_bg = pygame.Surface((self.fail_text[1][2], self.fail_text[1][3])).convert_alpha()
+        self.fail_text_bg.fill((0,0,0))
+        self.fail_text_bg.set_alpha(128)
+        
         self.complete_text = make_text(
             "Level Complete!", constants.BIG_FONT, (0,100,250), 200, 10
         )
         self.complete_text[1][0] = 400-self.complete_text[1][2]/2 # center in x
-        self.complete_text[0].convert() 
-        #self.complete_text[0].set_colorkey((0,0,0))
+        self.complete_text_bg = pygame.Surface((self.complete_text[1][2], self.complete_text[1][3])).convert_alpha()
+        self.complete_text_bg.fill((0,0,0))
+        self.complete_text_bg.set_alpha(128)
         
         # Green Crystal (goal) location
         self.crystal = Crystal(self.tilemap_good.crystal_loc, self.good, self.spritesheet.sprite_sheet)
@@ -168,19 +175,13 @@ class MainGame(GameScene):
         self.good.update()
         self.evil.draw(screen)
         self.evil.update()
-        #self.obstacles.draw(screen)
-        #self.obstacles.update()
         
         # UI Stuff
         if self.level_fail:
-            rect = self.fail_text[1][:]
-            rect[0] -= 8
-            pygame.draw.rect(screen,(0,0,0),rect)
+            screen.blit(self.fail_text_bg, (self.fail_text[1][0]-8,self.fail_text[1][1]))
             screen.blit(*self.fail_text)
         elif self.level_complete:
-            rect = self.complete_text[1][:]
-            rect[0] -= 8
-            pygame.draw.rect(screen,(0,0,0),rect)
+            screen.blit(self.complete_text_bg, (self.complete_text[1][0]-8,self.complete_text[1][1]))
             screen.blit(*self.complete_text)
 
         # TODO: I recommend all objects that need to be drawn have their own draw() method
@@ -188,6 +189,7 @@ class MainGame(GameScene):
 
     def on_draw(self, screen):
         self.draw_game(screen)
+        #screen.blit(self.bg_surf, (0, 0))
         pygame.display.update()
         # splitting out into two functions here (i.e. "on_draw" and "draw_game") makes it easier
         # in the future to do things like render fade in/outs, pause screens, other effects ect.

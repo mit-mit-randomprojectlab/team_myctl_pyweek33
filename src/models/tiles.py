@@ -30,7 +30,7 @@ class TileMap():
         self.crystal_loc = (8 + 32*6, 12 + 32*17)
         
         self.tiles = self.load_tiles(filename)
-        self.map_surface = pygame.Surface((self.map_w, self.map_h))
+        self.map_surface = pygame.Surface((self.map_w, self.map_h)).convert_alpha()
         #self.map_surface.set_colorkey(0, 0, 0)
         self.load_map()
 
