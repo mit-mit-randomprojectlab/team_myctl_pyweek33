@@ -22,8 +22,9 @@ MENU_ITEM_FONT = pygame.font.SysFont(None, 30)
 BIG_FONT = pygame.font.Font(os.path.join(RESOURCES_PATH,'BabyMarker-1GZaL.ttf'), 40)
 
 LEVELS = [
-    "level1",
-    "level2",
+    "clutter",
+    "channels",
+    "singlebend",
     ]
 
 # Colors
