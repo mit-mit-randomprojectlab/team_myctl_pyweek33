@@ -60,7 +60,7 @@ class OccupancyGrid():
         for row in map:
             x = 0
             for tile in row:
-                if not tile == "-1":
+                if not (tile == "-1" or tile == "32"):
                     self.occ[y][x] = True
                 x += 1
             y += 1
@@ -270,10 +270,11 @@ class OccupancyGrid():
 
 # Crystal: goal location thing
 class Crystal():
-    def __init__(self, pos, player_good):
+    def __init__(self, pos, player_good, sprite_sheet):
         self.pos = pos
         self.pickedup = False
         self.player = player_good
+        self.sprite_sheet = sprite_sheet
         self.ani_to = 0
     
     def Update(self):
@@ -285,6 +286,7 @@ class Crystal():
     
     def Draw(self, screen):
         if self.pickedup == False or self.ani_to % 10 < 5:
-            pygame.draw.rect(screen,(0,255,0),(self.pos[0]-16,self.pos[1]-16,32,32))
+            #pygame.draw.rect(screen,(0,255,0),(self.pos[0]-16,self.pos[1]-16,32,32))
+            screen.blit(self.sprite_sheet, (self.pos[0]-16,self.pos[1]-16), area=(32*32,0,32,32))
             
     

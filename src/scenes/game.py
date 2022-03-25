@@ -76,11 +76,8 @@ class MainGame(GameScene):
             "Level Complete!", constants.BIG_FONT, constants.COLOR.WHITE.value, 200, 300
         )
         
-        # Green Crystal (goal) location (TODO: should this depend on the level or is it
-        # constant?)
-        posx = 8 + 32*6
-        posy = 12 + 32*17
-        self.crystal = Crystal((posx,posy), self.good)
+        # Green Crystal (goal) location
+        self.crystal = Crystal(self.tilemap_good.crystal_loc, self.good, self.spritesheet.sprite_sheet)
         
         # Game variables
         self.reach_goal = False # triggered if get green crystal (TODO)
