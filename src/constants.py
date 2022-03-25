@@ -25,6 +25,7 @@ LEVELS = [
     "clutter",
     "channels",
     "singlebend",
+    "thebox",
     ]
 
 # Colors
