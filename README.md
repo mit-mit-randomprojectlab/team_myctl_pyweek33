@@ -1,4 +1,3 @@
 # Team MYCTL PyWeek 33 Entry
 
-Repo for the game!
-Once the comp starts, I will populate the basic folders etc.
+PyWeek 33 (March 2022) Entry "TBC" for theme "My Evil Twin".
