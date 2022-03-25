@@ -35,6 +35,7 @@ class MainGame(GameScene):
         self.evil_surf = pygame.Surface((400, 600))
         
         # Test
+        self.temp_surf = pygame.Surface(window_size).convert_alpha()
         self.bg_surf = pygame.Surface(window_size)
         self.bg_surf.fill((0,0,0))
         self.bg_surf.convert()
@@ -49,6 +50,9 @@ class MainGame(GameScene):
         # back to this scene (i.e. could happen multiple time in a game).
         # I recommend re-instantiating in-game objects here (e.g. like the player, and put
         # the player starting data in it's __init__() method etc. ...
+        
+        if switchtoargs[0] == None:
+            return # returning from pausescene, leave game as is
         
         # the level we will load
         self.level = switchtoargs[0]
@@ -81,7 +85,7 @@ class MainGame(GameScene):
         self.fail_text[1][0] = 400-self.fail_text[1][2]/2 # center in x
         self.fail_text_bg = pygame.Surface((self.fail_text[1][2], self.fail_text[1][3])).convert_alpha()
         self.fail_text_bg.fill((0,0,0))
-        self.fail_text_bg.set_alpha(128)
+        self.fail_text_bg.set_alpha(100)
         
         self.complete_text = make_text(
             "Level Complete!", constants.BIG_FONT, (0,100,250), 200, 10
@@ -139,7 +143,10 @@ class MainGame(GameScene):
     def on_event(self, events):
         for event in events:
             if event.type == KEYDOWN and event.key == K_ESCAPE:
-                self.director.change_scene("mainmenu", [])
+                #self.director.change_scene("mainmenu", [])
+                self.draw_game(self.temp_surf)
+                self.temp_surf.blit(self.bg_surf, (0, 0))
+                self.director.change_scene("pausescene", [self.level, self.temp_surf])
                 # this is the basic way we might be able to switch from one scene to another:
                 # each scene has a reference to the director, and then when they are ready to
                 # transfer to the next scene, they just call director.change_scene() ...
@@ -189,7 +196,6 @@ class MainGame(GameScene):
 
     def on_draw(self, screen):
         self.draw_game(screen)
-        #screen.blit(self.bg_surf, (0, 0))
         pygame.display.update()
         # splitting out into two functions here (i.e. "on_draw" and "draw_game") makes it easier
         # in the future to do things like render fade in/outs, pause screens, other effects ect.
