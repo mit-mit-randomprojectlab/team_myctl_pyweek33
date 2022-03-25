@@ -26,6 +26,9 @@ class TileMap():
         self.graytile = pygame.Surface((32, 32))
         self.graytile.fill((100,100,100))
         
+        # default if not in tile map
+        self.crystal_loc = (8 + 32*6, 12 + 32*17)
+        
         self.tiles = self.load_tiles(filename)
         self.map_surface = pygame.Surface((self.map_w, self.map_h))
         #self.map_surface.set_colorkey(0, 0, 0)
@@ -126,6 +129,8 @@ class TileMap():
                     tiles.append(Tile("tile_10_4.png", x * self.tile_size, y * self.tile_size, self.spritesheet))
                 elif tile == "31":
                     tiles.append(Tile("window_wall.png", x * self.tile_size, y * self.tile_size, self.spritesheet))
+                elif tile == "32": # green crystal
+                    self.crystal_loc = (8 + x * self.tile_size + 16, 12 + y * self.tile_size + 16)
                 x += 1
             y += 1
         self.map_w, self.map_h = x * self.tile_size, y * self.tile_size

@@ -63,12 +63,15 @@ class ResourceManager:
 
         # Else, try to load the sound
         try:
-            sound = pygame.mixer.music.load(
+            #sound = pygame.mixer.music.load(
+            #    ResourceManager.__resources_path / subtype / filename
+            #)
+            sound = pygame.mixer.Sound(
                 ResourceManager.__resources_path / subtype / filename
             )
 
         except pygame.error as e:
-            raise IOError("Couldn't load image: {e}".format(e=e))
+            raise IOError("Couldn't load sound: {e}".format(e=e))
 
         ResourceManager.__sounds[filename] = sound
 
