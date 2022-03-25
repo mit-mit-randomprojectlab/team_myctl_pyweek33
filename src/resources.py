@@ -35,7 +35,8 @@ def init(mainpath, window_size):
 
     # Load sound data
     sounds = [
-        "test001.ogg",
+        "good_win.ogg",
+        "evilfailure.ogg",
     ]
     for sound in sounds:
         ResourceManager().get_sound(sound)
