@@ -84,7 +84,7 @@ class OccupancyGrid():
     # DetectCollision: returns true if hitting obstacle
     def DetectCollision(self, x, y):
         
-        psize = 30 # player hitbox size
+        psize = 28 # player hitbox size
         
         x = x-self.offset[0]
         y = y-self.offset[1]
@@ -96,8 +96,8 @@ class OccupancyGrid():
             x = xlim - 16 - 1
         if x <= 16 + 1:
             x = 16 + 1
-        if y <= 16 + 1:
-            y = 16 + 1
+        if y <= 16 + 1 + 32:
+            y = 16 + 1 + 32
         if y >= ylim - 16 - 1:
             y = ylim - 16 - 1
         newx = x
@@ -114,29 +114,29 @@ class OccupancyGrid():
         l_ind = self.GetTileIndex(newx-psize/2,y)
         r_ind = self.GetTileIndex(newx+psize/2,y)
         
-        if self.CheckCollisionTileIndex(ul_ind):
+        if self.CheckCollisionTileIndex(ul_ind) and ul_ind[1] > 0:
             pos = (self.tilesize*ul_ind[0]+self.offset[0], self.tilesize*ul_ind[1]+self.offset[1])
             return (newx+self.offset[0], newy+self.offset[1], pos)
-        if self.CheckCollisionTileIndex(ur_ind):
+        if self.CheckCollisionTileIndex(ur_ind) and ul_ind[1] > 0:
             pos = (self.tilesize*ur_ind[0]+self.offset[0], self.tilesize*ur_ind[1]+self.offset[1])
             return (newx+self.offset[0], newy+self.offset[1], pos)
-        if self.CheckCollisionTileIndex(ll_ind):
+        if self.CheckCollisionTileIndex(ll_ind) and ul_ind[1] > 0:
             pos = (self.tilesize*ll_ind[0]+self.offset[0], self.tilesize*ll_ind[1]+self.offset[1])
             return (newx+self.offset[0], newy+self.offset[1], pos)
-        if self.CheckCollisionTileIndex(lr_ind):
+        if self.CheckCollisionTileIndex(lr_ind) and ul_ind[1] > 0:
             pos = (self.tilesize*lr_ind[0]+self.offset[0], self.tilesize*lr_ind[1]+self.offset[1])
             return (newx+self.offset[0], newy+self.offset[1], pos)
         
-        if self.CheckCollisionTileIndex(u_ind):
+        if self.CheckCollisionTileIndex(u_ind) and ul_ind[1] > 0:
             pos = (self.tilesize*u_ind[0]+self.offset[0], self.tilesize*u_ind[1]+self.offset[1])
             return (newx+self.offset[0], newy+self.offset[1], pos)
-        if self.CheckCollisionTileIndex(d_ind):
+        if self.CheckCollisionTileIndex(d_ind) and ul_ind[1] > 0:
             pos = (self.tilesize*d_ind[0]+self.offset[0], self.tilesize*d_ind[1]+self.offset[1])
             return (newx+self.offset[0], newy+self.offset[1], pos)
-        if self.CheckCollisionTileIndex(l_ind):
+        if self.CheckCollisionTileIndex(l_ind) and ul_ind[1] > 0:
             pos = (self.tilesize*l_ind[0]+self.offset[0], self.tilesize*l_ind[1]+self.offset[1])
             return (newx+self.offset[0], newy+self.offset[1], pos)
-        if self.CheckCollisionTileIndex(r_ind):
+        if self.CheckCollisionTileIndex(r_ind) and ul_ind[1] > 0:
             pos = (self.tilesize*r_ind[0]+self.offset[0], self.tilesize*r_ind[1]+self.offset[1])
             return (newx+self.offset[0], newy+self.offset[1], pos)
         
@@ -148,7 +148,7 @@ class OccupancyGrid():
     # to (x+dx,y+dy) in occupancy map. Returns constrained (x, y)
     def HandleCollision(self, x, y, dx, dy):
         
-        psize = 28 # player hitbox size
+        psize = 24 # player hitbox size
         
         x = x-self.offset[0]
         y = y-self.offset[1]
@@ -160,8 +160,8 @@ class OccupancyGrid():
             x = xlim - 16 - 1
         if x <= 16 + 1:
             x = 16 + 1
-        if y <= 16 + 1:
-            y = 16 + 1
+        if y <= 16 + 1 + 32:
+            y = 16 + 1 + 32
         if y >= ylim - 16 - 1:
             y = ylim - 16 - 1
         newx = x
