@@ -40,11 +40,15 @@ class MainGame(GameScene):
         self.bg_surf.fill((0,0,0))
         self.bg_surf.convert()
         self.bg_surf.set_alpha(128)
+
         
         # Use this space to initialise anything that only needs to be done when the game/app
         # first starts up and not again
 
     def on_switchto(self, switchtoargs):
+        path = os.path.join(constants.RESOURCES_PATH, "music", "game_background.ogg")
+        pygame.mixer.music.load(path)
+        pygame.mixer.music.play(-1)
 
         # Use this space to initialise things that need to be done every time the game switches
         # back to this scene (i.e. could happen multiple time in a game).
@@ -56,6 +60,7 @@ class MainGame(GameScene):
         
         # the level we will load
         self.level = switchtoargs[0]
+
         
         # load the sprite sheet for tilemap
         sheetpath = os.path.join(constants.RESOURCES_PATH,'spritesheet','spritesheet.png')
@@ -109,6 +114,9 @@ class MainGame(GameScene):
     def on_update(self):
         self.tilemap_good.UpdateAnimations()
         self.tilemap_evil.UpdateAnimations()
+        # path = os.path.join(constants.RESOURCES_PATH, "music", "game_background.ogg")
+        # pygame.mixer.music.load(path)
+        # pygame.mixer.music.play(-1)
         
         self.crystal.Update()
         if self.crystal.pickedup == True:
@@ -116,6 +124,7 @@ class MainGame(GameScene):
             if self.reset_countdown == 90:
                 # for example play sound for complete level
                 ResourceManager().get_sound("good_win.ogg","sound").play()
+                ResourceManager().get_sound("gem.ogg", "sound").play()
         
         # check for end level transitions
         if self.reach_goal:
@@ -125,6 +134,7 @@ class MainGame(GameScene):
             if self.reset_countdown == 90:
                 # for example play sound for failed level
                 ResourceManager().get_sound("evilfailure.ogg","sound").play()
+                ResourceManager().get_sound("failed.ogg","sound").play()
         if self.reach_goal or self.level_fail:
             self.reset_countdown -= 1
             if self.reset_countdown <= 0:
@@ -139,6 +149,7 @@ class MainGame(GameScene):
 
         # I suggest all in game objects that need updating should have their own update()
         # method, and these are all called here
+            
 
     def on_event(self, events):
         for event in events:

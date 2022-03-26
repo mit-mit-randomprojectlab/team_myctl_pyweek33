@@ -282,6 +282,7 @@ class Crystal():
         dy = self.pos[1]-self.player.sprite.y
         if sqrt(pow(dx,2)+pow(dy,2)) < 20:
             self.pickedup = True
+            # ResourceManager().get_sound("gem.ogg", "sound").play()
         self.ani_to += 1
     
     def Draw(self, screen):
