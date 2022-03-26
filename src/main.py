@@ -53,6 +53,6 @@ def main(mainpath):
     director.addscene("introscene", introscene)
 
     # start up director
-    director.change_scene("mainmenu", [])
-    #director.change_scene("introscene", [])
+    #director.change_scene("mainmenu", [])
+    director.change_scene("introscene", ['victory'])
     director.loop()

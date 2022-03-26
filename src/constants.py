@@ -16,7 +16,7 @@ RESOURCES_PATH = Path(src.__file__).parent.parent.absolute() / "data"
 
 # Fonts
 TITLE_FONT = pygame.font.SysFont(None, 40)
-MENU_ITEM_FONT = pygame.font.SysFont(None, 30)
+MENU_ITEM_FONT = pygame.font.SysFont(None, 40)
 
 #BIG_FONT = pygame.font.SysFont(None, 80)
 BIG_FONT = pygame.font.Font(os.path.join(RESOURCES_PATH,'BabyMarker-1GZaL.ttf'), 40)
@@ -26,6 +26,8 @@ LEVELS = [
     "channels",
     "singlebend",
     "thebox",
+    "themaze",
+    "thelock"
     ]
 
 # Colors
