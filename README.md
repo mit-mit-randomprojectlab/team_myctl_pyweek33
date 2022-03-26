@@ -1,6 +1,4 @@
-########################
 # Quantum Entanglement
-########################
 
 A PyWeek 33 (March 2022) Entry by Team MYCTL for theme "My Evil Twin"
 
