@@ -56,6 +56,7 @@ class PauseScene(GameScene):
             elif event.type == KEYDOWN and event.key == K_r: # reset level
                 self.director.change_scene("maingame", [self.level_from])
             elif event.type == KEYDOWN and event.key == K_q: # quit to menu
+                pygame.mixer.music.stop()
                 self.director.change_scene("mainmenu", [None])
                 
     def on_draw(self, screen):

@@ -167,10 +167,14 @@ class Player(pygame.sprite.Sprite):
             self.right_pressed = False
             self.up_pressed = False
             self.down_pressed = False
+            ResourceManager().get_sound("walking.ogg", "sounds").stop()
         else:
-            if self.left_pressed or self.right_pressed or self.up_pressed or self.down_pressed:
-                ResourceManager().get_sound("walking.ogg", "sounds").play()
+            walk_check1 = not (self.left_pressed or self.right_pressed or self.up_pressed or self.down_pressed)
             self.player_input()
+            if self.twin == 'good' and walk_check1 and (self.left_pressed or self.right_pressed or self.up_pressed or self.down_pressed):
+                ResourceManager().get_sound("walking.ogg", "sounds").play(-1)
+            if not (self.left_pressed or self.right_pressed or self.up_pressed or self.down_pressed):
+                ResourceManager().get_sound("walking.ogg", "sounds").stop()
         self.animation_state()
         self.movement()
     

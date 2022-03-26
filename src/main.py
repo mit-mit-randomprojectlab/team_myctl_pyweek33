@@ -54,5 +54,5 @@ def main(mainpath):
 
     # start up director
     director.change_scene("mainmenu", [])
-    #director.change_scene("introscene", [])
+    #director.change_scene("introscene", ['finallevel'])
     director.loop()

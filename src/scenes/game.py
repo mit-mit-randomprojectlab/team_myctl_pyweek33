@@ -40,15 +40,13 @@ class MainGame(GameScene):
         self.bg_surf.fill((0,0,0))
         self.bg_surf.convert()
         self.bg_surf.set_alpha(128)
-
+        
+        self.music = None
         
         # Use this space to initialise anything that only needs to be done when the game/app
         # first starts up and not again
 
     def on_switchto(self, switchtoargs):
-        path = os.path.join(constants.RESOURCES_PATH, "music", "game_background.ogg")
-        pygame.mixer.music.load(path)
-        pygame.mixer.music.play(-1)
 
         # Use this space to initialise things that need to be done every time the game switches
         # back to this scene (i.e. could happen multiple time in a game).
@@ -60,7 +58,22 @@ class MainGame(GameScene):
         
         # the level we will load
         self.level = switchtoargs[0]
-
+        ind = constants.LEVELS.index(self.level)
+        if ind == 0:
+            self.music = None
+        
+        # Setup Music
+        if self.music == None:
+            pygame.mixer.music.stop()
+            if ind == len(constants.LEVELS)-1:
+                path = os.path.join(constants.RESOURCES_PATH, "music", "scientists_remix.ogg")
+                self.music = 'loopfinal'
+            else:
+                path = os.path.join(constants.RESOURCES_PATH, "music", "game_background.ogg")
+                self.music = 'loop'
+            pygame.mixer.music.load(path)
+            pygame.mixer.music.set_volume(1.0)
+            pygame.mixer.music.play(-1)
         
         # load the sprite sheet for tilemap
         sheetpath = os.path.join(constants.RESOURCES_PATH,'spritesheet','spritesheet.png')
@@ -114,9 +127,6 @@ class MainGame(GameScene):
     def on_update(self):
         self.tilemap_good.UpdateAnimations()
         self.tilemap_evil.UpdateAnimations()
-        # path = os.path.join(constants.RESOURCES_PATH, "music", "game_background.ogg")
-        # pygame.mixer.music.load(path)
-        # pygame.mixer.music.play(-1)
         
         self.crystal.Update()
         if self.crystal.pickedup == True:
@@ -140,10 +150,16 @@ class MainGame(GameScene):
             if self.reset_countdown <= 0:
                 if self.level_complete:
                     ind = constants.LEVELS.index(self.level)
-                    if ind < len(constants.LEVELS)-1: # go to next level
+                    if ind < len(constants.LEVELS)-2: # go to next level
                         self.director.change_scene("maingame", [constants.LEVELS[ind+1]])
+                    elif ind < len(constants.LEVELS)-1:
+                        self.music = None
+                        pygame.mixer.music.stop()
+                        self.director.change_scene("introscene", ['finallevel'])
                     else:
-                        self.director.change_scene("mainmenu", []) # for now
+                        self.music = None
+                        pygame.mixer.music.stop()
+                        self.director.change_scene("introscene", ['victory'])
                 elif self.level_fail:
                     self.director.change_scene("maingame", [self.level])
 
