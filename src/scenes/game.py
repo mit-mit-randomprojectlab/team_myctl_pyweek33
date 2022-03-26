@@ -58,15 +58,22 @@ class MainGame(GameScene):
         
         # the level we will load
         self.level = switchtoargs[0]
+        ind = constants.LEVELS.index(self.level)
+        if ind == 0:
+            self.music = None
         
         # Setup Music
         if self.music == None:
             pygame.mixer.music.stop()
-            path = os.path.join(constants.RESOURCES_PATH, "music", "game_background.ogg")
+            if ind == len(constants.LEVELS)-1:
+                path = os.path.join(constants.RESOURCES_PATH, "music", "scientists_remix.ogg")
+                self.music = 'loopfinal'
+            else:
+                path = os.path.join(constants.RESOURCES_PATH, "music", "game_background.ogg")
+                self.music = 'loop'
             pygame.mixer.music.load(path)
             pygame.mixer.music.set_volume(1.0)
             pygame.mixer.music.play(-1)
-            self.music = 'loop'
         
         # load the sprite sheet for tilemap
         sheetpath = os.path.join(constants.RESOURCES_PATH,'spritesheet','spritesheet.png')
@@ -143,12 +150,16 @@ class MainGame(GameScene):
             if self.reset_countdown <= 0:
                 if self.level_complete:
                     ind = constants.LEVELS.index(self.level)
-                    if ind < len(constants.LEVELS)-1: # go to next level
+                    if ind < len(constants.LEVELS)-2: # go to next level
                         self.director.change_scene("maingame", [constants.LEVELS[ind+1]])
+                    elif ind < len(constants.LEVELS)-1:
+                        self.music = None
+                        pygame.mixer.music.stop()
+                        self.director.change_scene("introscene", ['finallevel'])
                     else:
                         self.music = None
                         pygame.mixer.music.stop()
-                        self.director.change_scene("mainmenu", []) # for now
+                        self.director.change_scene("introscene", ['victory'])
                 elif self.level_fail:
                     self.director.change_scene("maingame", [self.level])
 

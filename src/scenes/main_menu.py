@@ -43,7 +43,8 @@ class MainMenu(GameScene):
         # fill background (write over previously drawn data from past frames)
         screen.fill(constants.COLOR.BLACK.value)
         
-        screen.blit(ResourceManager().get_image("mainmenu.png"), (0,0))
+        #screen.blit(ResourceManager().get_image("mainmenu.png"), (0,0))
+        screen.blit(ResourceManager().get_image("title_final.png"), (0,0))
         
         """
         self.title = make_text(
@@ -51,10 +52,10 @@ class MainMenu(GameScene):
         )
         screen.blit(*self.title)
         """
-        self.button1 = pygame.Rect(320, 230, 160, 50)
-        pygame.draw.rect(screen, (0,150,0), self.button1)
+        self.button1 = pygame.Rect(320, 380, 160, 50)
+        pygame.draw.rect(screen, (150,150,0), self.button1)
         self.button1_text = make_text(
-            "New Game", constants.MENU_ITEM_FONT, constants.COLOR.WHITE.value, 330, 240
+            "New Game", constants.MENU_ITEM_FONT, constants.COLOR.WHITE.value, 330, 390
         )
         screen.blit(*self.button1_text)
 

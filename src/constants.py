@@ -10,7 +10,7 @@ FRAME_RATE = 30
 
 WINDOW_SIZE_X = 800
 WINDOW_SIZE_Y = 600
-WINDOW_TITLE = "The Game"
+WINDOW_TITLE = "Quantum Entanglement"
 
 RESOURCES_PATH = Path(src.__file__).parent.parent.absolute() / "data"
 
@@ -25,9 +25,9 @@ LEVELS = [
     "clutter",
     "channels",
     "singlebend",
+    "thelock",
     "thebox",
     "themaze",
-    "thelock"
     ]
 
 # Colors

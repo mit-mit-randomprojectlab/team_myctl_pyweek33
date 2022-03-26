@@ -55,7 +55,10 @@ scene_data_intro.append(['conv','goodface_concern','evilface_evil','evil003b','e
 scene_data_intro.append(['conv','goodface_concern','evilface_evil','good004','good'])
 
 # Final Level Scene:
+scene_data_finallevel = []
 
+scene_data_finallevel.append(['conv','goodface_happy','evilface_suprise','finallevel','good'])
+scene_data_finallevel.append(['conv','goodface_happy2','evilface_evil','evil003a','evil'])
 
 # End Game/Victory Scene:
 scene_data_victory = []
@@ -258,7 +261,7 @@ class IntroCutScene(GameScene):
                 screen.blit(self.resource_gfx['crystal_big'], (300, 300))
             elif self.extragfx == 'evil':
                 self.resource_gfx['evil_objects'].set_alpha(int(255*(30-self.fadeto)/30))
-                screen.blit(self.resource_gfx['evil_objects'], (400, 230))
+                screen.blit(self.resource_gfx['evil_objects'], (420, 230))
             
         pygame.display.update()
         
