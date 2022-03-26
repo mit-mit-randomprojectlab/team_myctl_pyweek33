@@ -1,8 +1,8 @@
-## Quantum Entanglement
+# Quantum Entanglement
 
-#A PyWeek 33 (March 2022) Entry by Team MYCTL for theme "My Evil Twin"
+A PyWeek 33 (March 2022) Entry by Team MYCTL for theme "My Evil Twin"
 
-#Running the game:
+# Running the game:
 
 Open a terminal/console/shell, "cd" to the game directory and run the command
 
