@@ -31,4 +31,10 @@ Voices: Timberlake1, mit-mit, Lani-Skyy
 
 Other content of the game was plundered from various open sources:
 
-TO ADD .....
+Sounds:
+"Footsteps" by HaelDB (CC0)
+https://opengameart.org/content/footsteps-leather-cloth-armor
+
+"GUI Sound Effects" by Lokif (CC0)
+https://opengameart.org/content/gui-sound-effects
+
