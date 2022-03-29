@@ -22,12 +22,12 @@ He was once the most respected figure in all of particle physics: until the day 
 
 # Credits
 
-Game Design: mit-mit, Lani-Skyy, cfugs, yudjinn, Timberlake1
-Programming: yudjinn, cfugs, Lani-Skyy, Timberlake1, mit-mit
-Artwork: mit-mit, Timberlake1
-Sounds: cfugs
-Music: cfugs, mit-mit, Timberlake1
-Voices: Timberlake1, mit-mit, Lani-Skyy
+- Game Design: mit-mit, Lani-Skyy, cfugs, yudjinn, Timberlake1
+- Programming: yudjinn, cfugs, Lani-Skyy, Timberlake1, mit-mit
+- Artwork: mit-mit, Timberlake1
+- Sounds: cfugs
+- Music: cfugs, mit-mit, Timberlake1
+- Voices: Timberlake1, mit-mit, Lani-Skyy
 
 Other content of the game was plundered from various open sources:
 
